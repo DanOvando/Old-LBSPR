@@ -5,7 +5,8 @@
 \title{Load LBSPR Assessment Parameters}
 \usage{
 LoadAssessPars(PathtoAssessFile = "~/PathToAssessFile",
-  AssessParFileName = "AssessPars", AssessParExt = ".csv", ind = 1)
+  AssessParFileName = "AssessPars", AssessParExt = ".csv", ind = 1,
+  sep = "comma")
 }
 \arguments{
 \item{PathtoAssessFile}{an object of class \code{character} containing the
@@ -19,7 +20,9 @@ extension of Assessment Parameter file (default is ".csv" and currently can
 not handle anything else)}
 
 \item{ind}{an optional \code{numeric} value indicating which column contains
-the parameters (default is 1)}
+the parameters (default is 1).}
+
+\item{sep}{an object of class \code{character} that specifies if decimals points in csv are indicated by \code{comma} (default) or \code{period} (using read.csv2).}
 }
 \value{
 Returns a list of assessment parameters (\code{AssessPars}) that is

@@ -2,10 +2,11 @@
 % Please edit documentation in R/LoadSimPars.r
 \name{LoadSimPars}
 \alias{LoadSimPars}
+\alias{LoadSimParsTEST}
 \title{Load LBSPR Simulation Parameters}
 \usage{
-LoadSimPars(PathtoSimFile = "~/PathToSimFile", SimParFileName = "SimData",
-  SimParExt = ".csv", ind = 1)
+LoadSimParsTEST(PathtoSimFile = "~/PathToSimFile",
+  SimParFileName = "SimData", SimParExt = ".csv", ind = 1)
 }
 \arguments{
 \item{PathtoSimFile}{an object of class \code{character} containing the full path to the Simulation Parameter file}
@@ -23,15 +24,7 @@ Returns a list of simulation parameters
 This function reads in a csv file that contains the parameters for simulating the LB-SPR model.  See SimData ReadMe for details of
 contents of SimParFile.
 }
-\examples{
-\dontrun{
-
-}
-}
 \author{
 Adrian Hordyk
-}
-\seealso{
-\code{\link{}}
 }
 

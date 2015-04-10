@@ -6,7 +6,7 @@
 \title{A wrapper function to execute the ADMB optimization routine}
 \usage{
 RunLBSPRAssess(AssessPars, LenFreq, LenMids, ADMBDir, ExName = "lbspr",
-  showOutput = FALSE, MaxCount = 5)
+  showOutput = FALSE, MaxCount = 5, ADMBRead = NULL)
 }
 \arguments{
 \item{AssessPars}{An object of class \code{list} that contains the parameters
@@ -36,6 +36,8 @@ works on Windows OS.}
 number of times the ADMB code is executed with different starting
 parameters before the determining that the model failed to converge.
 Default is 5.}
+
+\item{ADMBRead}{ADD DETAILS HERE}
 }
 \value{
 A \code{list} that contains:

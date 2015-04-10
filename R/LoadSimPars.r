@@ -8,13 +8,8 @@
 #' @param ind an optional \code{numeric} value indicating which column contains the parameters (default is 1)
 #' @return Returns a list of simulation parameters
 #' @author Adrian Hordyk 
-#' @seealso \code{\link{}} 
-#' @examples      
-#' \dontrun{
-#' 
-#' }  
 
-LoadSimPars <- function(PathtoSimFile="~/PathToSimFile", SimParFileName="SimData", SimParExt=".csv", ind=1) {
+LoadSimParsTEST <- function(PathtoSimFile="~/PathToSimFile", SimParFileName="SimData", SimParExt=".csv", ind=1) {
   
   FixedSPRFun <- function(tryFM, SetSPR, SimPars) {
     SimPars$FM <- tryFM
@@ -50,7 +45,7 @@ LoadSimPars <- function(PathtoSimFile="~/PathToSimFile", SimParFileName="SimData
 	FM     <- Dat["FM",ind+1]
 	SPR    <- Dat["SPR",ind+1]
 	MLL	   <- Dat["MLL",ind+1]
-	DisMortFrac <<- Dat["DisMortFrac",ind+1]
+	DisMortFrac <- Dat["DisMortFrac",ind+1]
 	if (!is.na(SPR)) {
 	  print("SPR value is present")
 	  print("Ignoring preset F/M and calculating new value for F/M")
@@ -59,7 +54,7 @@ LoadSimPars <- function(PathtoSimFile="~/PathToSimFile", SimParFileName="SimData
 	  SimPars <- list(MK=MK, Linf=Linf, CVLinf=CVLinf, L50=L50, L95=L95, 
 					Walpha=Walpha, Wbeta=Wbeta, FecB=FecB, Mpow=Mpow, 
 					NGTG=NGTG, GTGLinfdL=GTGLinfdL, MaxSD=MaxSD, Linc=Linc, R0=R0, recK=recK, 
-					SL50=SL50, SL95=SL95, FM=FM, SPR=SPR)
+					SL50=SL50, SL95=SL95, FM=FM, SPR=SPR, MLL=MLL, DisMortFrac=DisMortFrac)
    # Calculate new F/M					
 	 FindFM <- try(uniroot(FixedSPRFun, interval=c(0, 1E6), SetSPR=SPR, SimPars), silent=TRUE)
 	  if (class(FindFM) == "try-error") stop("Cannot achieve SPR. Perhaps SPR is too low (or too high)?", " SPR is: ", SPR)
@@ -69,7 +64,7 @@ LoadSimPars <- function(PathtoSimFile="~/PathToSimFile", SimParFileName="SimData
 	SimPars <- list(MK=MK, Linf=Linf, CVLinf=CVLinf, L50=L50, L95=L95, 
 					Walpha=Walpha, Wbeta=Wbeta, FecB=FecB, Mpow=Mpow, 
 					NGTG=NGTG, GTGLinfdL=GTGLinfdL, MaxSD=MaxSD, Linc=Linc, R0=R0, recK=recK, 
-					SL50=SL50, SL95=SL95, FM=FM, SPR=SPR)
+					SL50=SL50, SL95=SL95, FM=FM, SPR=SPR, MLL=MLL, DisMortFrac=DisMortFrac)
   }
   
   if(SimParExt != ".csv") stop("Unrecognized file extension")

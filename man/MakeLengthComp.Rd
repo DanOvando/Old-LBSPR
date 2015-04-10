@@ -6,7 +6,7 @@
 \title{Create Length Frequency Composition}
 \usage{
 MakeLengthComp(PathtoLenDat, LenDatFileName, LenDatExt = ".csv",
-  Header = FALSE, Linc = 5, AssessPars, Multi = 1.25)
+  Header = FALSE, Linc = 5, AssessPars, Multi = 1.25, sep = "period")
 }
 \arguments{
 \item{PathtoLenDat}{An object of class \code{character} that contains the
@@ -29,6 +29,8 @@ is a header (Default is FALSE).}
 LB-SPR assessment. Created by \code{LoadAssessPars} function.}
 
 \item{Multi}{An \code{numeric} object that specifies the maximum length class as a mulitiple of \code{AssessPars$Linf}.}
+
+\item{sep}{Decimals are indicated by \code{"period"} (default) or \code{"comma"}}
 }
 \value{
 A \code{list} containing the Length Bins (\code{LenBins}), the Length
@@ -39,15 +41,7 @@ A \code{list} containing the Length Bins (\code{LenBins}), the Length
 \code{MakeLengthCompFun} is used to create a length frequency composition
 from raw length data.
 }
-\examples{
-\dontrun{
-
-}
-}
 \author{
 Adrian Hordyk
-}
-\seealso{
-\code{\link{}}
 }
 

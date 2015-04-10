@@ -17,17 +17,13 @@
 #' @param AssessPars A \code{list} containing the parameters required for the
 #'   LB-SPR assessment. Created by \code{LoadAssessPars} function.
 #' @param Multi An \code{numeric} object that specifies the maximum length class as a mulitiple of \code{AssessPars$Linf}.  
-#' @param sep Decimals are indicated by \code{"period"} (default) or \code("comma") 
+#' @param sep Decimals are indicated by \code{"period"} (default) or \code{"comma"} 
 #' @return A \code{list} containing the Length Bins (\code{LenBins}), the Length
 #'   Frequency (\code{LenFreq}) and the midpoints of the length bins 
 #'   (\code{LenMids}).
 #' @author Adrian Hordyk 
-#' @seealso \code{\link{}}
-#' @export
-#' @examples      
-#' \dontrun{
-#' 
-#' } 
+
+
 
 MakeLengthComp <- function(PathtoLenDat, LenDatFileName, LenDatExt=".csv", Header=FALSE, Linc=5, AssessPars, Multi=1.25, sep="period") {
   
