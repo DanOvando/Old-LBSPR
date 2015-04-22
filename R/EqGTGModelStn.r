@@ -1,8 +1,8 @@
 #' Function to simulate length-structured growth-type-group (GTG) model to 
 #' generate size equilibrium composition of population and catch, as well as SPR
 #' of stock and relative yield.  More details to be added.
-#' @name StandardGTGModel
-#' @title Generate GTG using standard model
+#' @name GenSPRYPR
+#' @title Generate size structure using GTG model
 #' @param SimPars An object of class \code{list} that contains all parameters
 #'   required to run GTG model.  Full description of model to be added at later
 #'   date.
@@ -80,8 +80,8 @@ EqGTGModelStn <- function(kslope, SimPars, Mpar) {
 	}
 	for (L in 2:(HighAge)) {
       if (LenBins[L] < DiffLinfs[GTG]) {
-        NPRUnfished[L, GTG] <- NPRUnfished[L-1, GTG] * exp(-MMat[L-1, GTG] * (ALen[L+1] - ALen[L]))
-        NPRFished[L, GTG] <- NPRFished[L-1, GTG] * exp(-ZMat[L-1, GTG] * (ALen[L+1] - ALen[L]))
+        NPRUnfished[L, GTG] <- NPRUnfished[L-1, GTG] * exp(-MMat[L-1, GTG] * (ALen[L] - ALen[L-1]))
+        NPRFished[L, GTG] <- NPRFished[L-1, GTG] * exp(-ZMat[L-1, GTG] * (ALen[L] - ALen[L-1]))
       }
     }
     for (L in 1:length(LenMids)) {
@@ -89,7 +89,7 @@ EqGTGModelStn <- function(kslope, SimPars, Mpar) {
       NatLFishedPop[L, GTG] <- (NPRFished[L,GTG] - NPRFished[L+1,GTG])/ZMat[L, GTG]  
 	  FecGTGUnfished[L, GTG] <- NatLUnFishedPop[L, GTG] * FecLen[L]
     }	
-	
+
     NatLUnFishedCatch[,GTG] <- NatLUnFishedPop[, GTG] * 1.0/(1+exp(-log(19)*(LenMids-SL50)/(SL95-SL50))) 
     NatLFishedCatch[,GTG]  <- NatLFishedPop[, GTG] * 1.0/(1+exp(-log(19)*(LenMids-SL50)/(SL95-SL50)))
 	   
@@ -100,7 +100,7 @@ EqGTGModelStn <- function(kslope, SimPars, Mpar) {
     # YPR 
     YPR[GTG] <- sum(NatLFishedPop[, GTG]  * Weight * 1.0/(1+exp(-log(19)*(LenMids-SL50)/(SL95-SL50)))) * FM
   }	
-
+	
   # Calc Unfished Fitness 
   Fit <- apply(FecGTGUnfished, 2, sum, na.rm=TRUE) # Total Fecundity per Group
   FitPR <- Fit/RecProbs # Fitness per-recruit
@@ -151,6 +151,7 @@ EqGTGModelStn <- function(kslope, SimPars, Mpar) {
   Output$Pen <- Pen
   Output$Mpar <- Mpar 
   Output$kpar <- kpar 
+  Output$FitPR <- FitPR
   
   return(Output)
   })

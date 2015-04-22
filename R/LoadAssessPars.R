@@ -16,12 +16,8 @@
 #' @return Returns a list of assessment parameters (\code{AssessPars}) that is
 #'   used in other functions.
 #' @author Adrian Hordyk
-#' @seealso \code{\link{}}
 #' @export
-#' @examples      
-#' \dontrun{
-#' 
-#' }  
+
 
 LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileName="AssessPars", AssessParExt=".csv", ind=1, sep="comma") {
   

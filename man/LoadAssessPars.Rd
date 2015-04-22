@@ -33,15 +33,7 @@ This function reads in a csv file that contains the parameters required for
 running the LB-SPR Assessment model.  See LoadAssessPars ReadMe for details
 of contents of SimParFile.
 }
-\examples{
-\dontrun{
-
-}
-}
 \author{
 Adrian Hordyk
-}
-\seealso{
-\code{\link{}}
 }
 

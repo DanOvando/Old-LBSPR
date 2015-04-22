@@ -8,15 +8,16 @@
 #' @param ind an optional \code{numeric} value indicating which column contains the parameters (default is 1)
 #' @return Returns a list of simulation parameters
 #' @author Adrian Hordyk 
+#' @export
 
-LoadSimParsTEST <- function(PathtoSimFile="~/PathToSimFile", SimParFileName="SimData", SimParExt=".csv", ind=1) {
+LoadSimPars <- function(PathtoSimFile="~/PathToSimFile", SimParFileName="SimData", SimParExt=".csv", ind=1) {
   
-  FixedSPRFun <- function(tryFM, SetSPR, SimPars) {
-    SimPars$FM <- tryFM
-    TryMod <- GTGLengthSPR_YPR_Fun(SimPars)
-    opt <- (SetSPR - TryMod$SPR)
-    return(opt)
-  }
+#   FixedSPRFun <- function(tryFM, SetSPR, SimPars) {
+#     SimPars$FM <- tryFM
+#     TryMod <- GenSPRYPR(SimPars)
+#     opt <- (SetSPR - TryMod$SPR)
+#     return(opt)
+#   }
 	
   if(SimParExt == ".csv") {
     Dat <- read.csv(file.path(PathtoSimFile, paste0(SimParFileName, SimParExt)))
@@ -56,9 +57,9 @@ LoadSimParsTEST <- function(PathtoSimFile="~/PathToSimFile", SimParFileName="Sim
 					NGTG=NGTG, GTGLinfdL=GTGLinfdL, MaxSD=MaxSD, Linc=Linc, R0=R0, recK=recK, 
 					SL50=SL50, SL95=SL95, FM=FM, SPR=SPR, MLL=MLL, DisMortFrac=DisMortFrac)
    # Calculate new F/M					
-	 FindFM <- try(uniroot(FixedSPRFun, interval=c(0, 1E6), SetSPR=SPR, SimPars), silent=TRUE)
-	  if (class(FindFM) == "try-error") stop("Cannot achieve SPR. Perhaps SPR is too low (or too high)?", " SPR is: ", SPR)
-	  if (class(FindFM) != "try-error") FM <- FindFM$root 
+# 	 FindFM <- try(uniroot(FixedSPRFun, interval=c(0, 1E6), SetSPR=SPR, SimPars), silent=TRUE)
+# 	  if (class(FindFM) == "try-error") stop("Cannot achieve SPR. Perhaps SPR is too low (or too high)?", " SPR is: ", SPR)
+# 	  if (class(FindFM) != "try-error") FM <- FindFM$root 
 	}
 	 
 	SimPars <- list(MK=MK, Linf=Linf, CVLinf=CVLinf, L50=L50, L95=L95, 

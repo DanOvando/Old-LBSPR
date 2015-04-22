@@ -22,7 +22,7 @@
 #'   Frequency (\code{LenFreq}) and the midpoints of the length bins 
 #'   (\code{LenMids}).
 #' @author Adrian Hordyk 
-
+#' @export
 
 
 MakeLengthComp <- function(PathtoLenDat, LenDatFileName, LenDatExt=".csv", Header=FALSE, Linc=5, AssessPars, Multi=1.25, sep="period") {

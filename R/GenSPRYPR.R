@@ -10,12 +10,9 @@
 #' @author Adrian Hordyk
 #' @seealso \code{\link{}}
 #' @export
-#' @examples      
-#' \dontrun{
-#' 
-#' }  
+ 
 
-GenSPRYPR <- function(kslope, SimPars, ...) {
+GenSPRYPR <- function(kslope, SimPars,...) {
   with(SimPars, {
     SDLinf <- CVLinf * Linf # Standard Deviation of Pop. Linf 
     
@@ -48,11 +45,13 @@ GenSPRYPR <- function(kslope, SimPars, ...) {
     # }  
     
     # Life-History Ratios  
-    MKL <- MK * (Linf/LenBins+0.5*Linc)^Mpow # M/K ratio for each length class
+    MKL <- MK * (Linf/(LenBins+0.5*Linc))^Mpow # M/K ratio for each length class
     MKMat <- matrix(MKL, nrow=length(MKL), ncol=NGTG) # Matrix of MK for each GTG
 	tempFun <- function(X) MKL + kslope*(DiffLinfs[X] - Linf)
     MKMat <- sapply(seq_along(DiffLinfs), function (X) tempFun(X))
-    	
+	
+
+	
     FK <- FM * MK # F/K ratio 
     FKL <- FK * SelLen # F/K ratio for each length class   
     # FkL[Legal == 0] <- FkL[Legal == 0] * DiscardMortFrac 
@@ -92,7 +91,7 @@ GenSPRYPR <- function(kslope, SimPars, ...) {
       # YPR 
       YPR[GTG] <- sum(NatLFishedPop[, GTG]  * Weight * 1.0/(1+exp(-log(19)*(LenMids-SL50)/(SL95-SL50)))) * FM
     }
-
+  	
     # Calc Unfished Fitness 
     Fit <- apply(FecGTGUnfished, 2, sum, na.rm=TRUE) # Total Fecundity per Group
     FitPR <- Fit/RecProbs # Fitness per-recruit
@@ -136,11 +135,14 @@ GenSPRYPR <- function(kslope, SimPars, ...) {
     Output$FecLen <- FecLen 
     Output$MatLen <- MatLen 
     Output$SelLen <- SelLen
+	Output$MKL <- MKL
     Output$MKMat <- MKMat 
     Output$FKL <- FKL 
     Output$ZKLMat <- ZKLMat 
 	Output$ObjFun <- ObjFun 
 	Output$Pen <- Pen
+	Output$FitPR <- FitPR
+	Output$Diff <- range(FitPR)[2] - range(FitPR)[1]
     
     return(Output)
   })
