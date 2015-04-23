@@ -1,18 +1,23 @@
 #' Function to simulate length-structured growth-type-group (GTG) model to 
 #' generate size equilibrium composition of population and catch, as well as SPR
-#' of stock and relative yield.  More details to be added.
-#' @name GenSPRYPR
-#' @title Generate size structure using GTG model
+#' of stock and relative yield. This model is parameterised with the life-history ratios.
+#' @name SimMod_LHR
+#' @title Generate size structure using GTG model and calculate relative YPR and SPR
 #' @param SimPars An object of class \code{list} that contains all parameters
 #'   required to run GTG model.  Full description of model to be added at later
 #'   date.
+#' @param kslope An object of class \code{numeric} which determines the slope of the 
+#'   the natural mortality for each GTG to approximate equal fitness across GTG. 
+#'   A value of 0 means all GTG have the same natural mortality. The value must be 
+#'   quite small to ensure that M is not negative for any groups. See manuscript for 
+#'   more details.
 #' @return  To add details later.
 #' @author Adrian Hordyk
 #' @seealso \code{\link{}}
 #' @export
  
 
-GenSPRYPR <- function(kslope, SimPars,...) {
+SimMod_LHR <- function(SimPars, kslope=0, ...) {
   with(SimPars, {
     SDLinf <- CVLinf * Linf # Standard Deviation of Pop. Linf 
     
@@ -96,7 +101,7 @@ GenSPRYPR <- function(kslope, SimPars,...) {
     Fit <- apply(FecGTGUnfished, 2, sum, na.rm=TRUE) # Total Fecundity per Group
     FitPR <- Fit/RecProbs # Fitness per-recruit
     ObjFun <- sum((FitPR - median(FitPR, na.rm=TRUE))^2, na.rm=TRUE) # This needs to be minimised to make fitness approximately equal across GTG - by adjusting kslope 
-	Pen <- 0; if (min(MKMat) < 0 ) Pen <- 1E9 # Penalty for optimising kslope   
+	Pen <- 0; if (min(MKMat) <= 0 ) Pen <- (1/abs(min(MKMat)))^2 * 1E5 # Penalty for optimising kslope   
     ObjFun <- ObjFun + Pen
 	# print(cbind(kslope, ObjFun, Pen))
 	
