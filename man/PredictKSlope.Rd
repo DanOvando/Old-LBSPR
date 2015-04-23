@@ -2,16 +2,16 @@
 % Please edit documentation in R/PredictKSlope.r
 \name{PredictKSlope}
 \alias{PredictKSlope}
-\title{Predict the value of kslope parameter from the LM and SimPars.}
+\title{Predict the value of kslope parameter from the LM and Pars.}
 \usage{
-PredictKSlope(SimPars)
+PredictKSlope(Pars)
 }
 \arguments{
-\item{SimPars}{An object of class \code{list} that contains all parameters
+\item{Pars}{An object of class \code{list} that contains all parameters
 required to run GTG model.}
 }
 \description{
-This function Predict the value of kslope parameter from the LM and SimPars.
+This function Predict the value of kslope parameter from the LM and Pars.
 }
 \author{
 Adrian Hordyk

@@ -19,14 +19,14 @@
 #' @export
 
 
-LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileName="AssessPars", AssessParExt=".csv", ind=1, sep="comma") {
+LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileName="AssessPars", AssessParExt=".csv", ind=1) {
   
   if(AssessParExt == ".csv") {
     Dat <- read.csv(file.path(PathtoAssessFile, paste0(AssessParFileName, AssessParExt)))
     row.names(Dat) <- Dat[,1]
     
     # Load new parameters 
-    Mk     <- Dat["MK",ind+1]
+    MK     <- Dat["MK",ind+1]
     Linf   <- Dat["Linf",ind+1]
     CVLinf <- Dat["CVLinf",ind+1]
     L50    <- Dat["L50",ind+1]
@@ -39,20 +39,21 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
     SDLinf <- CVLinf * Linf
     MaxSD  <- Dat["MaxSD",ind+1]
     GTGLinfdL <- ((Linf + MaxSD * SDLinf) - (Linf - MaxSD * SDLinf))/(NGTG-1);	
-    
+	
     SL50Min <- Dat["SL50Min", ind+1]
-    if (length(SL50Min) < 1) SL50Min <- 10
+    if (length(SL50Min) < 1 | is.na(SL50Min)) SL50Min <- 1
     SL50Max <- Dat["SL50Max", ind+1]
-    if (length(SL50Max) < 1) SL50Max <- 0.95 * Linf
+    if (length(SL50Max) < 1| is.na(SL50Max)) SL50Max <- 0.95 * Linf
     DeltaMin <- Dat["DeltaMin", ind+1]
-    if (length(DeltaMin) < 1) DeltaMin <- 0.01
+    if (length(DeltaMin) < 1| is.na(DeltaMin)) DeltaMin <- 0.01
     DeltaMax <- Dat["DeltaMax", ind+1]
-    if (length(DeltaMax) < 1) DeltaMax <- 0.1 * Linf
+    if (length(DeltaMax) < 1| is.na(DeltaMax)) DeltaMax <- 0.5 * Linf
     
-    AssessPars <- list(Mk=Mk, Linf=Linf, CVLinf=CVLinf, L50=L50, L95=L95, 
+    AssessPars <- list(MK=MK, Linf=Linf, CVLinf=CVLinf, L50=L50, L95=L95, 
                     Walpha=Walpha, Wbeta=Wbeta, FecB=FecB, Mpow=Mpow, 
                     NGTG=NGTG, GTGLinfdL=GTGLinfdL, MaxSD=MaxSD, SL50Min=SL50Min, 
                     SL50Max=SL50Max, DeltaMin=DeltaMin, DeltaMax=DeltaMax)
+    AssessPars$kslope <- as.numeric(PredictKSlope(AssessPars))
   }
   
   if(AssessParExt != ".csv") stop("Unrecognized file extension")

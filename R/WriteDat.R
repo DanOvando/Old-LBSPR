@@ -27,7 +27,7 @@ WriteDat <- function(AssessPars, LengthMids, LenFreq, ADMBDir, ExName="lbspr") {
     if (ChkFile) file.remove(paste0(ADMBDir, "/", ExName, ".dat"))
     
     # Error handling
-    if (any(!is.numeric(c(Mk, Linf, CVLinf, L50, L95, 
+    if (any(!is.numeric(c(MK, Linf, CVLinf, L50, L95, 
                           Walpha, Wbeta)))) {
       Error <- "Error - Input parameters not numeric"
       stop(Error)				 
@@ -47,7 +47,7 @@ WriteDat <- function(AssessPars, LengthMids, LenFreq, ADMBDir, ExName="lbspr") {
     # Preliminary calculations.
     Linc <- By
     NLenMids <- length(LengthMids)
-    LenBins <- seq(from=LengthMids[2]-0.5*Linc, by=Linc, length=length(LengthMids)+1)
+    LenBins <- seq(from=LengthMids[1]-0.5*Linc, by=Linc, length=length(LengthMids)+1)
     
     # To add - check if length bins start at zero 
     SDLinf <- CVLinf * Linf
@@ -56,7 +56,7 @@ WriteDat <- function(AssessPars, LengthMids, LenFreq, ADMBDir, ExName="lbspr") {
     # Write out data file
     con=file(paste0(ADMBDir, "/", ExName, ".dat"), open="wt")
     write(as.character("#M/K"),con)
-    write(Mk,con)
+    write(MK,con)
     write(as.character("#Linf"),con)
     write(Linf,con)
     write(as.character("#CVLinf"),con)
@@ -88,7 +88,9 @@ WriteDat <- function(AssessPars, LengthMids, LenFreq, ADMBDir, ExName="lbspr") {
     write(as.character("#logDeltaMin"),con)
     write(log(DeltaMin),con)	
     write(as.character("#logDeltaMax"),con)
-    write(log(DeltaMax),con)	
+    write(log(DeltaMax),con)
+    write(as.character("#kslope"),con)
+    write(kslope,con)	
     close(con)
   })
 } 

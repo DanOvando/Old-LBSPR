@@ -5,8 +5,7 @@
 \title{Load LBSPR Assessment Parameters}
 \usage{
 LoadAssessPars(PathtoAssessFile = "~/PathToAssessFile",
-  AssessParFileName = "AssessPars", AssessParExt = ".csv", ind = 1,
-  sep = "comma")
+  AssessParFileName = "AssessPars", AssessParExt = ".csv", ind = 1)
 }
 \arguments{
 \item{PathtoAssessFile}{an object of class \code{character} containing the

@@ -55,13 +55,12 @@ RunLBSPRAssess <- function(AssessPars, LenFreq, LenMids, ADMBDir, ExName="lbspr"
  
   GetWD <- getwd()
   Count <- 0 
-  setwd(ADMBRead)
   Output <- NULL 
   
   if (length(ADMBRead) < 1) ADMBRead <- ADMBDir
+  setwd(ADMBRead)
   
   ADMBFile <- file.path(ADMBRead,  ExName)
-  print("FIRST HERE --------------------------------------------------------")
   DeleteFiles(ADMBDir) # Delete old files if they exist
   WriteDat(AssessPars, LenMids, LenFreq, ADMBRead, ExName) # Write Data file 
   

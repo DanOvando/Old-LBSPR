@@ -44,6 +44,7 @@ LoadSimPars <- function(PathtoSimFile="~/PathToSimFile", SimParFileName="SimData
 					Walpha=Walpha, Wbeta=Wbeta, FecB=FecB, Mpow=Mpow, 
 					NGTG=NGTG, GTGLinfdL=GTGLinfdL, MaxSD=MaxSD, Linc=Linc, R0=R0, recK=recK, 
 					SL50=SL50, SL95=SL95, FM=FM, SPR=SPR, MLL=MLL, DisMortFrac=DisMortFrac)
+	SimPars$kslope <- as.numeric(PredictKSlope(SimPars))
   }
   
   if(SimParExt != ".csv") stop("Unrecognized file extension")

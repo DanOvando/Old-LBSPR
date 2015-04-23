@@ -55,8 +55,6 @@ SimMod_LHR <- function(SimPars, kslope=0, ...) {
 	tempFun <- function(X) MKL + kslope*(DiffLinfs[X] - Linf)
     MKMat <- sapply(seq_along(DiffLinfs), function (X) tempFun(X))
 	
-
-	
     FK <- FM * MK # F/K ratio 
     FKL <- FK * SelLen # F/K ratio for each length class   
     # FkL[Legal == 0] <- FkL[Legal == 0] * DiscardMortFrac 
@@ -96,7 +94,7 @@ SimMod_LHR <- function(SimPars, kslope=0, ...) {
       # YPR 
       YPR[GTG] <- sum(NatLFishedPop[, GTG]  * Weight * 1.0/(1+exp(-log(19)*(LenMids-SL50)/(SL95-SL50)))) * FM
     }
-  	
+
     # Calc Unfished Fitness 
     Fit <- apply(FecGTGUnfished, 2, sum, na.rm=TRUE) # Total Fecundity per Group
     FitPR <- Fit/RecProbs # Fitness per-recruit
