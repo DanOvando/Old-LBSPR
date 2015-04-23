@@ -8,6 +8,6 @@
 
 PredictKSlope <- function(Pars) {
   data(KSlopeMod)
-  KSlope <- exp(predict(KSlopeMod, newdata=list(LinfMK=log(Pars$Linf)-log(Pars$MK), CVLinf=Pars$CVLinf, RelL50=(Pars$L50/Pars$Linf), Mpow=Pars$Mpow)))  
+  KSlope <- exp(predict(KSlopeMod, newdata=list(LinfMK=log(Pars$Linf)-log(Pars$MK), CVLinf=Pars$CVLinf, RelL50=(Pars$L50/Pars$Linf), MatDelta=Pars$L95 - Pars$L50,  Mpow=Pars$Mpow)))  
   return(as.numeric(KSlope))
 }
