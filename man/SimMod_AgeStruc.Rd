@@ -4,7 +4,7 @@
 \alias{SimMod_AgeStruc}
 \title{Generate size structure using GTG model and calculate relative YPR and SPR}
 \usage{
-SimMod_AgeStruc(SimPars, Mpar, kslope = 0, ...)
+SimMod_AgeStruc(SimPars, Mpar, ...)
 }
 \arguments{
 \item{SimPars}{An object of class \code{list} that contains all parameters

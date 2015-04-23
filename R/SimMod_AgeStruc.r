@@ -22,7 +22,7 @@
 #' @export
  
 
-SimMod_AgeStruc <- function(SimPars, Mpar, kslope=0, ...) {
+SimMod_AgeStruc <- function(SimPars, Mpar,...) {
   with(SimPars, {
   Fpar <- Mpar * FM
   kpar <- Mpar/ MK

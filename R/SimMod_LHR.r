@@ -17,7 +17,7 @@
 #' @export
  
 
-SimMod_LHR <- function(SimPars, kslope=0, ...) {
+SimMod_LHR <- function(SimPars, ...) {
   with(SimPars, {
     SDLinf <- CVLinf * Linf # Standard Deviation of Pop. Linf 
     

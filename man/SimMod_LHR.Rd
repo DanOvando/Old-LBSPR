@@ -4,7 +4,7 @@
 \alias{SimMod_LHR}
 \title{Generate size structure using GTG model and calculate relative YPR and SPR}
 \usage{
-SimMod_LHR(SimPars, kslope = 0, ...)
+SimMod_LHR(SimPars, ...)
 }
 \arguments{
 \item{SimPars}{An object of class \code{list} that contains all parameters
