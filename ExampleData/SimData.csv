@@ -1,0 +1,27 @@
+#LBSPR Parameters,,,,#Description
+MK,1.5,,,M/k ratio
+Linf,377,,,Asymptoptic length
+CVLinf,0.1,,,CV of Linf
+L50,245,,,size at 50% maturity
+L95,285,,,size at 95% maturity
+Walpha,0.0001,,,alpha for L-W 
+Wbeta,3,,,beta for L-W
+FecB,3,,,exponent for length - fecundity relationship
+Mpow,0,,,Size-dependant M - set to 0 for fixed M
+NGTG,40,,,Number of Growth-Type-Groups (set at about 40 or higher)
+MaxSD,3,,,Maximum standard deviation in Linf across GTG (set at 3 typically)
+#Below only required for Simulation,,,,
+Linc,5,,,Length increment in size classes
+R0,10,,,Initial recruitment
+recK,5,,,Density dependence 
+SL50,245,,,Size at 50% selectivity
+SL95,285,,,Size at 95% selectivity
+FM,0.5,,,F/M ratio
+MLL,,,,Minimum legal length (not yet implemented)
+DisMortFrac,,,,Discard mortality (fraction of fishing mortality - not yet implemented)
+#Assess Specific Parameters,,,,
+SL50Min,,,,Minimum bound for SL50 (set at 1 for no bound)
+SL50Max,,,,Maximum bound for SL50 (Set at Linf for no bound)
+DeltaMin,0.0001,,,Minimum bound for SelDelta - set something very small
+DeltaMax,,,,Maximum bound for SL50 (Set at Linf for no bound)
+#Bayesian Priors,,,,

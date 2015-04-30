@@ -52,12 +52,13 @@
 #' 
 
 RunLBSPRAssess <- function(AssessPars, LenFreq, LenMids, ADMBDir, ExName="lbspr", showOutput=FALSE, MaxCount=5, ADMBRead=NULL) {
- 
+
   GetWD <- getwd()
   Count <- 0 
   Output <- NULL 
   
   if (length(ADMBRead) < 1) ADMBRead <- ADMBDir
+
   setwd(ADMBRead)
   
   ADMBFile <- file.path(ADMBRead,  ExName)
@@ -80,7 +81,7 @@ RunLBSPRAssess <- function(AssessPars, LenFreq, LenMids, ADMBDir, ExName="lbspr"
   if (ADMBCode > 0) ModelFailed <- TRUE
   TryRead <- try(read.table(paste0(ADMBRead, "/", ExName, ".std"), skip=1)[4:7, 2:4])
   if (class(TryRead) == "try-error")   ModelFailed <- TRUE
-  
+
   while (ModelFailed & Count <=MaxCount) {
     Ind <- min(which(cumsum(LenFreq)/max(cumsum(LenFreq)) > runif(1)))
     startSL50 <- LenMids[Ind]
@@ -88,7 +89,7 @@ RunLBSPRAssess <- function(AssessPars, LenFreq, LenMids, ADMBDir, ExName="lbspr"
     startFM <- runif(1, min=0.1, max=5)
     WritePin(ExName, ADMBDir, InitVals) # Write Pin file
     ModelFailed <- FALSE
-    ADMBCode <- system(ADMBFile, show.output.on.console=showOutput)
+    ADMBCode <- system(ADMBFile)
     if (ADMBCode > 0) ModelFailed <- TRUE
     TryRead <- try(read.table(paste0(ADMBRead, "/", ExName, ".std"), skip=1)[4:7, 2:4])
     if (class(TryRead) == "try-error") {
