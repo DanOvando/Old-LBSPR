@@ -26,7 +26,7 @@ LHRMod <- SimMod_LHR(SimPars)
 # Run Assessmment Code 
 LenFreq <- LHRMod$ExpLenCatchFished 
 LenMids <- LHRMod$LenMids 
-ADMBDir <- paste(WD,"/LBSPR_ADMB",sep='')
+ADMBDir <- paste(WD,"/LBSPR_ADMB_Code",sep='')
 runMod <- RunLBSPRAssess(AssessPars, LenFreq, LenMids, ADMBDir, ExName="lbspr", MaxCount=5, ADMBRead=NULL)
 
 plot(LHRMod$LenMids, LHRMod$ExpLenCatchFished)
@@ -55,7 +55,7 @@ for (X in seq_along(FMVec)) {
   
   LenFreq <- LHRMod$ExpLenCatchFished 
   LenMids <- LHRMod$LenMids 
-  ADMBDir <- paste(WD,"/LBSPR_ADMB",sep='')
+  ADMBDir <- paste(WD,"/LBSPR_ADMB_Code",sep='')
   
   N <- 10 
   KSlopeVec <- seq(from=0, to=SimPars$kslope*Multi, length=N)
