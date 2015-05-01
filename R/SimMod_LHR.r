@@ -52,7 +52,8 @@ SimMod_LHR <- function(SimPars, ...) {
     # Life-History Ratios  
     MKL <- MK * (Linf/(LenBins+0.5*Linc))^Mpow # M/K ratio for each length class
     MKMat <- matrix(MKL, nrow=length(MKL), ncol=NGTG) # Matrix of MK for each GTG
-	tempFun <- function(X) MKL + kslope*(DiffLinfs[X] - Linf)
+	tempFun <- function(X) MKL + kslope*log(DiffLinfs[X] / Linf) # try log here
+	# tempFun <- function(X) MKL + kslope*(DiffLinfs[X] - Linf) #
     MKMat <- sapply(seq_along(DiffLinfs), function (X) tempFun(X))
 	
     FK <- FM * MK # F/K ratio 
