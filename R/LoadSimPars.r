@@ -18,6 +18,8 @@ LoadSimPars <- function(PathtoSimFile="~/PathToSimFile", SimParFileName="SimData
 		
 	# Load new parameters 
 	MK     <- Dat["MK",ind+1]
+	Mpar   <- Dat["Mpar",ind+1]
+	kpar   <- Mpar/MK
 	Linf   <- Dat["Linf",ind+1]
 	CVLinf <- Dat["CVLinf",ind+1]
 	L50    <- Dat["L50",ind+1]
@@ -40,7 +42,7 @@ LoadSimPars <- function(PathtoSimFile="~/PathToSimFile", SimParFileName="SimData
 	SPR    <- Dat["SPR",ind+1]
 	MLL	   <- Dat["MLL",ind+1]
 	DisMortFrac <- Dat["DisMortFrac",ind+1] 
-	SimPars <- list(MK=MK, Linf=Linf, CVLinf=CVLinf, L50=L50, L95=L95, 
+	SimPars <- list(MK=MK, Mpar=Mpar, kpar=kpar, Linf=Linf, CVLinf=CVLinf, L50=L50, L95=L95, 
 					Walpha=Walpha, Wbeta=Wbeta, FecB=FecB, Mpow=Mpow, 
 					NGTG=NGTG, GTGLinfdL=GTGLinfdL, MaxSD=MaxSD, Linc=Linc, R0=R0, recK=recK, 
 					SL50=SL50, SL95=SL95, FM=FM, SPR=SPR, MLL=MLL, DisMortFrac=DisMortFrac)
