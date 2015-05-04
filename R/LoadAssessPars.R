@@ -12,15 +12,20 @@
 #'   not handle anything else)
 #' @param ind an optional \code{numeric} value indicating which column contains 
 #'   the parameters (default is 1).
-#' @param sep an object of class \code{character} that specifies if decimals points in csv are indicated by \code{comma} (default) or \code{period} (using read.csv2).
+#' @param LenMids A vector of the midpoints of the length classes for the observed length data.
 #' @return Returns a list of assessment parameters (\code{AssessPars}) that is
 #'   used in other functions.
 #' @author Adrian Hordyk
 #' @export
 
 
-LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileName="AssessPars", AssessParExt=".csv", ind=1) {
+LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileName="AssessPars", AssessParExt=".csv", ind=1, LenMids) {
   
+  OptimiseFitness <- function(logMslope, SimPars, Function) {
+    Mslope <- exp(logMslope) #+ 0.000000001
+    SimPars$Mslope <- Mslope
+    return(Function(SimPars=SimPars)$ObjFun)
+  }
   if(AssessParExt == ".csv") {
     Dat <- read.csv(file.path(PathtoAssessFile, paste0(AssessParFileName, AssessParExt)))
     row.names(Dat) <- Dat[,1]
@@ -53,7 +58,11 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
                     Walpha=Walpha, Wbeta=Wbeta, FecB=FecB, Mpow=Mpow, 
                     NGTG=NGTG, GTGLinfdL=GTGLinfdL, MaxSD=MaxSD, SL50Min=SL50Min, 
                     SL50Max=SL50Max, DeltaMin=DeltaMin, DeltaMax=DeltaMax)
-    AssessPars$kslope <- as.numeric(PredictKSlope(AssessPars))
+	
+	AssessPars$Linc <- LenMids[2] - LenMids[1]
+	AssessPars$AssessOpt <- TRUE
+	AssessPars$Mslope <- exp(optimise(OptimiseFitness, interval=log(c(0.000001, 0.1)), SimPars=AssessPars, Function=SimMod_LHR)$minimum) # Run Sim Model and fit optimal MSlope
+    # AssessPars$Mslope <- as.numeric(PredictMSlope(AssessPars))
   }
   
   if(AssessParExt != ".csv") stop("Unrecognized file extension")

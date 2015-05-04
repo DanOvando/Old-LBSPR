@@ -5,7 +5,7 @@
 \title{Load LBSPR Simulation Parameters}
 \usage{
 LoadSimPars(PathtoSimFile = "~/PathToSimFile", SimParFileName = "SimData",
-  SimParExt = ".csv", ind = 1)
+  SimParExt = ".csv", ind = 1, ModType = "Len")
 }
 \arguments{
 \item{PathtoSimFile}{an object of class \code{character} containing the full path to the Simulation Parameter file}
@@ -15,6 +15,8 @@ LoadSimPars(PathtoSimFile = "~/PathToSimFile", SimParFileName = "SimData",
 \item{SimParExt}{an object of class \code{character} containing the file extension of Simulation Parameter file (default is ".csv")}
 
 \item{ind}{an optional \code{numeric} value indicating which column contains the parameters (default is 1)}
+
+\item{ModType}{A character string of either \code{Len} or \code{Age} to indicate if the equilibrium simulation model is length or age structured respectively.}
 }
 \value{
 Returns a list of simulation parameters

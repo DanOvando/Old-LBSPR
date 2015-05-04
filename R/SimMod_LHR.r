@@ -6,11 +6,6 @@
 #' @param SimPars An object of class \code{list} that contains all parameters
 #'   required to run GTG model.  Full description of model to be added at later
 #'   date.
-#' @param kslope An object of class \code{numeric} which determines the slope of the 
-#'   the natural mortality for each GTG to approximate equal fitness across GTG. 
-#'   A value of 0 means all GTG have the same natural mortality. The value must be 
-#'   quite small to ensure that M is not negative for any groups. See manuscript for 
-#'   more details.
 #' @return  To add details later.
 #' @author Adrian Hordyk
 #' @seealso \code{\link{}}
@@ -19,6 +14,13 @@
 
 SimMod_LHR <- function(SimPars, ...) {
   with(SimPars, {
+    if (SimPars$AssessOpt) {
+	  SL50 <- 1 
+	  SL95 <- 2 
+	  FM <- 0
+	  recK <- 5 
+	  R0 <- 10
+	}
     SDLinf <- CVLinf * Linf # Standard Deviation of Pop. Linf 
     
     # Error Catches #
@@ -52,8 +54,8 @@ SimMod_LHR <- function(SimPars, ...) {
     # Life-History Ratios  
     MKL <- MK * (Linf/(LenBins+0.5*Linc))^Mpow # M/K ratio for each length class
     MKMat <- matrix(MKL, nrow=length(MKL), ncol=NGTG) # Matrix of MK for each GTG
-	tempFun <- function(X) MKL + kslope*log(DiffLinfs[X] / Linf) # try log here
-	# tempFun <- function(X) MKL + kslope*(DiffLinfs[X] - Linf) #
+	tempFun <- function(X) MKL + Mslope*(DiffLinfs[X] - Linf) #
+	# tempFun <- function(X) MKL + Mslope*log(DiffLinfs[X] / Linf) # try log here
     MKMat <- sapply(seq_along(DiffLinfs), function (X) tempFun(X))
 	
     FK <- FM * MK # F/K ratio 
@@ -99,10 +101,10 @@ SimMod_LHR <- function(SimPars, ...) {
     # Calc Unfished Fitness 
     Fit <- apply(FecGTGUnfished, 2, sum, na.rm=TRUE) # Total Fecundity per Group
     FitPR <- Fit/RecProbs # Fitness per-recruit
-    ObjFun <- sum((FitPR - median(FitPR, na.rm=TRUE))^2, na.rm=TRUE) # This needs to be minimised to make fitness approximately equal across GTG - by adjusting kslope 
-	Pen <- 0; if (min(MKMat) <= 0 ) Pen <- (1/abs(min(MKMat)))^2 * 1E5 # Penalty for optimising kslope   
+    ObjFun <- sum((FitPR - median(FitPR, na.rm=TRUE))^2, na.rm=TRUE) # This needs to be minimised to make fitness approximately equal across GTG - by adjusting Mslope 
+	Pen <- 0; if (min(MKMat) <= 0 ) Pen <- (1/abs(min(MKMat)))^2 * 1E5 # Penalty for optimising Mslope   
     ObjFun <- ObjFun + Pen
-	# print(cbind(kslope, ObjFun, Pen))
+	# print(cbind(Mslope, ObjFun, Pen))
 	
     # Calc SPR
     EPR0 <- apply(EPR_GTG,2,sum)[1]
