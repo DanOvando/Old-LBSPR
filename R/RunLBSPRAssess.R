@@ -76,7 +76,7 @@ RunLBSPRAssess <- function(AssessPars, LenFreq, LenMids, ADMBDir, ExName="lbspr"
   ModelFailed <- FALSE
   Sys.chmod(as.character(ADMBFile), mode="7777", use_umask =FALSE)
 
-  ADMBCode <- system(ADMBFile) #, show.output.on.console=showOutput)
+  ADMBCode <- system2(ADMBFile) #, show.output.on.console=showOutput)
   if (ADMBCode > 0) ModelFailed <- TRUE
   TryRead <- try(read.table(paste0(ADMBRead, "/", ExName, ".std"), skip=1)[4:7, 2:4])
   if (class(TryRead) == "try-error")   ModelFailed <- TRUE
