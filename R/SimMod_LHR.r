@@ -40,7 +40,7 @@ SimMod_LHR <- function(SimPars, ...) {
     MatLen <- 1.0/(1+exp(-log(19)*(LenMids-L50)/(L95-L50))) # Maturity Schedule 
     Weight <- Walpha * LenMids^Wbeta # Weight-at-length 
     FecLen <- MatLen * LenMids^FecB # Relative Fecundity at Length 
-    FecLen <- FecLen/max(FecLen) # Divide by maximum to make it more useful for plotting. Can add extra parameter(s) so that fecundity is absolute rather than relative (makes no difference to SPR)
+    # FecLen <- FecLen/max(FecLen) # Divide by maximum to make it more useful for plotting. Can add extra parameter(s) so that fecundity is absolute rather than relative (makes no difference to SPR)
     
     VulLen <- 1.0/(1+exp(-log(19)*(LenBins-SL50)/(SL95-SL50))) # Selectivity-at-Length
     SelLen <- VulLen

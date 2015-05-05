@@ -59,12 +59,12 @@ SimMod_AgeEq <- function(SimPars) {
           NatAgeFished[age] <- NatAgeFished[age-1] * exp(-ZatAge[age-1])
     	}  
     	if (AgeVec[age] == MaxAge) {
-    	  NatAgeUnfished[age] <- NatAgeUnfished[age-1] * (exp(-MatAge[age-1])/(1-exp(-MatAge[age])))
-          NatAgeFished[age] <- NatAgeFished[age-1] * (exp(-ZatAge[age-1])/(1-exp(-ZatAge[age])))
+    	  NatAgeUnfished[age] <- NatAgeUnfished[age-1] * (exp(-MatAge[age-1])) #/(1-exp(-MatAge[age])))
+          NatAgeFished[age] <- NatAgeFished[age-1] * (exp(-ZatAge[age-1])) #/(1-exp(-ZatAge[age])))
     	}  
         NatAgeCatch[age] <- FatAge[age]/ZatAge[age] * NatAgeFished[age] * (1-exp(-ZatAge[age]))
       }
-     
+      	  
       # Length Structure # 
       N <- NatAgeCatch
       LengthCompCatch <- LengthCompFished <- LengthCompUF <- rep(0, length(LenMids))
@@ -76,32 +76,32 @@ SimMod_AgeEq <- function(SimPars) {
       } 
     
       # Calc SPR 
+	  # by length 
       MatVec <- 1.0/(1+exp(-log(19)*(LenMids-L50)/((L95)-L50)))
       WatAge <- Walpha * LenMids ^ Wbeta
       FecVec <- (LenMids ^ FecB) * MatVec
-      FecVec <- FecVec/max(FecVec)
-    
+     
       SpUnF <- LengthCompUF * FecVec
       SpF <- LengthCompFished * FecVec
       SpUnFPR <- sum(SpUnF)/RecGTG
       SpFPR <- sum(SpF)/RecGTG 
-    
-      # MatVec <- 1.0/(1+exp(-log(19)*(LenVec-L50)/((L95)-L50)))
-      # WatAge <- Walpha * LenVec ^ Wbeta
-      # FecVec <- (LenVec ^ FecB) * MatVec
-      # FecVec <- FecVec/max(FecVec)  
      
-      # SpUnF <- NatAgeUnfished * FecVec
-      # SpF <- NatAgeFished * FecVec
-      # SpUnFPR <- sum(SpUnF)/RecGTG
-      # SpFPR <- sum(SpF)/RecGTG
+	  # by age 
+      MatVec <- 1.0/(1+exp(-log(19)*(LenVec-L50)/((L95)-L50)))
+      FecVec <- (LenVec ^ FecB) * MatVec
+    
+      SpUnF <- NatAgeUnfished * FecVec
+      SpF <- NatAgeFished * FecVec
+      SpUnFPR2 <- sum(SpUnF)/RecGTG
+      SpFPR2 <- sum(SpF)/RecGTG
       
       FitPR <- SpUnFPR
      
-      return(list(Age=AgeVec, Unfished=NatAgeUnfished, Fished=NatAgeFished, Catch=NatAgeCatch, LatA=LenVec, SpUnFPR=SpUnFPR, SpFPR=SpFPR, LengthCompUF=LengthCompUF, LengthCompFished=LengthCompFished, LengthCompCatch=LengthCompCatch, FitPR=FitPR))
+      return(list(Age=AgeVec, Unfished=NatAgeUnfished, Fished=NatAgeFished, Catch=NatAgeCatch, LatA=LenVec, SpUnFPR=SpUnFPR, SpFPR=SpFPR, SpUnFPR2=SpUnFPR2, SpFPR2=SpFPR2, LengthCompUF=LengthCompUF, LengthCompFished=LengthCompFished, LengthCompCatch=LengthCompCatch, FitPR=FitPR))
     }
 
 	MKGTG <- (TSMpar/TSkpar)+ Mslope*(DiffLinfs-Linf)
+
 	# Run population model for each GTG
 	RunGTGs <- sapply(1:NGTG, function(X) {
       LinfGTG <- DiffLinfs[X]
@@ -110,28 +110,35 @@ SimMod_AgeEq <- function(SimPars) {
       SingleGTGAgeModel(AgeVec, LinfGTG, MparGTG, RecGTG, TSkpar, L50, L95, SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, TSFpar, MaxAge, Linf)
     })
 	
-    SPR <- sum(sapply(1:NGTG, function(X) RunGTGs[,X]$SpFPR))/sum(sapply(1:NGTG, function(X) RunGTGs[,X]$SpUnFPR)) # Calc SPR 
+    SPR <- sum(sapply(1:NGTG, function(X) RunGTGs[,X]$SpFPR))/sum(sapply(1:NGTG, function(X) RunGTGs[,X]$SpUnFPR)) # Calc SPR by length
+	SPR2 <- sum(sapply(1:NGTG, function(X) RunGTGs[,X]$SpFPR2))/sum(sapply(1:NGTG, function(X) RunGTGs[,X]$SpUnFPR2)) # Calc SPR by age
     FitPR <- sapply(1:NGTG, function(X) RunGTGs[,X]$FitPR) # Calc fit for each GTG 
 	ObjFun <- sum((FitPR - median(FitPR, na.rm=TRUE))^2, na.rm=TRUE) # This needs to be minimised to make fitness approximately equal across GTG - by adjusting Mslope 
 	Pen <- 0; if (min(MKGTG) <= 0 ) Pen <- (1/abs(min(MKGTG)))^2 * 1E5 # Penalty for optimising Mslope   
     ObjFun <- ObjFun + Pen
+	
+	# Number at Age 
+	NatAgeUF <- sapply(1:NGTG, function(X) RunGTGs[,X]$Unfished)
 	
 	# Make Size Comp 
     LenDat <- apply(sapply(1:NGTG, function(X) RunGTGs[,X]$LengthCompCatch), 1, sum)
     LenDatPopF <- apply(sapply(1:NGTG, function(X) RunGTGs[,X]$LengthCompFished), 1, sum)
     LenDatPopUF <- apply(sapply(1:NGTG, function(X) RunGTGs[,X]$LengthCompUF), 1, sum)
 	
-   output <- NULL
-   output$SPR <- SPR
-   output$LenDat <- LenDat
-   output$LenDatPopF <- LenDatPopF
-   output$LenDatPopUF <- LenDatPopUF
-   output$LenMids <- LenMids 
-   output$LenBins <- LenBins
-   output$ObjFun <- ObjFun
-   output$Pen <- Pen   
-   
-   # add catch etc later
-   return(output)
+    output <- NULL
+    output$SPR <- SPR
+	output$SPR2 <- SPR2
+    output$LenDat <- LenDat
+    output$LenDatPopF <- LenDatPopF
+    output$LenDatPopUF <- LenDatPopUF
+    output$LenMids <- LenMids 
+    output$LenBins <- LenBins
+    output$ObjFun <- ObjFun
+    output$Pen <- Pen   
+	
+	output$NatAgeUF <- NatAgeUF
+    
+    # add catch etc later
+    return(output)
   })
 }
