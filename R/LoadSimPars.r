@@ -38,23 +38,24 @@ LoadSimPars <- function(PathtoSimFile="~/PathToSimFile", SimParFileName="SimData
 	NGTG   <- Dat["NGTG",ind+1]
 	SDLinf <- CVLinf * Linf
 	MaxSD  <- Dat["MaxSD",ind+1]
-	GTGLinfdL <- ((Linf + MaxSD * SDLinf) - (Linf - MaxSD * SDLinf))/(NGTG-1);	
-
+	GTGLinfdL <- ((Linf + MaxSD * SDLinf) - (Linf - MaxSD * SDLinf))/(NGTG-1) # for length structured model
+    GTGLinfBy <- Dat["GTGLinfBy",ind+1] # for age structured model 
 	Linc   <- Dat["Linc",ind+1]
 	R0     <- Dat["R0",ind+1]
 	TStep  <- Dat["Tstep",ind+1]
-	recK   <- Dat["recK",ind+1]
+	steepness <- Dat["steepness",ind+1]
+	recK   <- (4*steepness)/(1-steepness) # Goodyear composition ratio 
 	SL50   <- Dat["SL50",ind+1]
 	SL95   <- Dat["SL95",ind+1]
 	FM     <- Dat["FM",ind+1]
 	SPR    <- Dat["SPR",ind+1]
 	MLL	   <- Dat["MLL",ind+1]
+	
 	DisMortFrac <- Dat["DisMortFrac",ind+1] 
 
 	SimPars <- list(MK=MK, Mpar=Mpar, kpar=kpar, Linf=Linf, CVLinf=CVLinf, L50=L50, L95=L95, 
 					Walpha=Walpha, Wbeta=Wbeta, FecB=FecB, Mpow=Mpow, 
-					NGTG=NGTG, GTGLinfdL=GTGLinfdL, MaxSD=MaxSD, Linc=Linc, R0=R0, TStep=TStep, recK=recK, 
-					SL50=SL50, SL95=SL95, FM=FM, SPR=SPR, MLL=MLL, DisMortFrac=DisMortFrac)
+					NGTG=NGTG, GTGLinfdL=GTGLinfdL, GTGLinfBy=GTGLinfBy, MaxSD=MaxSD, Linc=Linc, R0=R0, TStep=TStep, steepness=steepness, recK=recK, SL50=SL50, SL95=SL95, FM=FM, SPR=SPR, MLL=MLL, DisMortFrac=DisMortFrac)
     if (ModType == "Len") Function <- SimMod_LHR				
 	if (ModType == "Age") Function <- SimMod_AgeEq
     SimPars$AssessOpt <- FALSE	

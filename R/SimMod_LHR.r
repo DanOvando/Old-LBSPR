@@ -95,9 +95,9 @@ SimMod_LHR <- function(SimPars, ...) {
       EPR_GTG[GTG,2] <- sum(NatLFishedPop[, GTG] * FecLen)
       
       # YPR 
-      YPR[GTG] <- sum(NatLFishedPop[, GTG]  * Weight * 1.0/(1+exp(-log(19)*(LenMids-SL50)/(SL95-SL50)))) * FM
+      YPR[GTG] <- sum(NatLFishedPop[, GTG]  * Weight * 1.0/(1+exp(-log(19)*(LenMids-SL50)/(SL95-SL50)))) * FM 
     }
-
+	
     # Calc Unfished Fitness 
     Fit <- apply(FecGTGUnfished, 2, sum, na.rm=TRUE) # Total Fecundity per Group
     FitPR <- Fit/RecProbs # Fitness per-recruit
@@ -117,7 +117,7 @@ SimMod_LHR <- function(SimPars, ...) {
     RelRec <- max(0, (reca * EPRf-1)/(recb*EPRf))
     
     Yield <- sum(YPR) * RelRec
-    
+   
     # Expected Length Structure of Catch 
     ExpectedLenCatchFished <- apply(NatLFishedCatch, 1, sum)/sum(apply(NatLFishedCatch, 1, sum))
     ExpectedLenPopFished <- apply(NatLFishedPop, 1, sum)/sum(apply(NatLFishedPop, 1, sum))

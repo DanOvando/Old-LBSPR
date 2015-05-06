@@ -22,7 +22,7 @@ SimMod_AgeEq <- function(SimPars) {
     
 	# GTG set-up 
 	SDLinf <- CVLinf * Linf
-    DiffLinfs <- seq(from=Linf-MaxSD*SDLinf, to=Linf+MaxSD*SDLinf, by=1) # Linfs of GTGs by units of 1 
+    DiffLinfs <- seq(from=Linf-MaxSD*SDLinf, to=Linf+MaxSD*SDLinf, by=GTGLinfBy) # Linfs of GTGs by units of GTGLinfBy 
     NGTG <- length(DiffLinfs)
     Probs <- dnorm(DiffLinfs, Linf, sd=SDLinf)/sum(dnorm(DiffLinfs, Linf, sd=SDLinf)) 
     ToSize <- max(DiffLinfs) 
@@ -89,15 +89,17 @@ SimMod_AgeEq <- function(SimPars) {
 	  # by age 
       MatVec <- 1.0/(1+exp(-log(19)*(LenVec-L50)/((L95)-L50)))
       FecVec <- (LenVec ^ FecB) * MatVec
-    
+      WatAge <- Walpha * LenVec ^ Wbeta
       SpUnF <- NatAgeUnfished * FecVec
       SpF <- NatAgeFished * FecVec
       SpUnFPR2 <- sum(SpUnF)/RecGTG
       SpFPR2 <- sum(SpF)/RecGTG
       
       FitPR <- SpUnFPR
-     
-      return(list(Age=AgeVec, Unfished=NatAgeUnfished, Fished=NatAgeFished, Catch=NatAgeCatch, LatA=LenVec, SpUnFPR=SpUnFPR, SpFPR=SpFPR, SpUnFPR2=SpUnFPR2, SpFPR2=SpFPR2, LengthCompUF=LengthCompUF, LengthCompFished=LengthCompFished, LengthCompCatch=LengthCompCatch, FitPR=FitPR))
+	  
+	  Yield <- sum(NatAgeFished * WatAge * SelAge) * FM 
+ 
+      return(list(Age=AgeVec, Unfished=NatAgeUnfished, Fished=NatAgeFished, NatAgeCatch=NatAgeCatch, LatA=LenVec, SpUnFPR=SpUnFPR, SpFPR=SpFPR, SpUnFPR2=SpUnFPR2, SpFPR2=SpFPR2, LengthCompUF=LengthCompUF, LengthCompFished=LengthCompFished, LengthCompCatch=LengthCompCatch, FitPR=FitPR, Yield=Yield))
     }
 
 	MKGTG <- (TSMpar/TSkpar)+ Mslope*(DiffLinfs-Linf)
@@ -117,6 +119,15 @@ SimMod_AgeEq <- function(SimPars) {
 	Pen <- 0; if (min(MKGTG) <= 0 ) Pen <- (1/abs(min(MKGTG)))^2 * 1E5 # Penalty for optimising Mslope   
     ObjFun <- ObjFun + Pen
 	
+	# Equilibrium Relative Recruitment
+    EPR0 <- sum(sapply(1:NGTG, function(X) RunGTGs[,X]$SpUnFPR2)) 
+    EPRf <- sum(sapply(1:NGTG, function(X) RunGTGs[,X]$SpFPR2))	
+    reca <- recK/EPR0
+    recb <- (reca * EPR0 - 1)/(R0*EPR0)
+    RelRec <- max(0, (reca * EPRf-1)/(recb*EPRf))
+    
+    Yield <- sum(sapply(1:NGTG, function(X) RunGTGs[,X]$Yield) * RelRec)
+	
 	# Number at Age 
 	NatAgeUF <- sapply(1:NGTG, function(X) RunGTGs[,X]$Unfished)
 	
@@ -128,6 +139,7 @@ SimMod_AgeEq <- function(SimPars) {
     output <- NULL
     output$SPR <- SPR
 	output$SPR2 <- SPR2
+	output$Yield <- Yield 
     output$LenDat <- LenDat
     output$LenDatPopF <- LenDatPopF
     output$LenDatPopUF <- LenDatPopUF
