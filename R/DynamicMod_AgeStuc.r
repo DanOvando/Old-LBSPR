@@ -5,7 +5,7 @@
 #' @param SimPars An object of class \code{list} that contains all parameters
 #'   required to run GTG model.  Full description of model to be added at later
 #'   date.
-#' @RecDevVec A vector of log-normally distributed recruitment deviations of length equal to
+#' @param RecDevVec A vector of log-normally distributed recruitment deviations of length equal to
 #' number of projection years (to be added to SimPars later).
 #' @return  To add details later.
 #' @author Adrian Hordyk
