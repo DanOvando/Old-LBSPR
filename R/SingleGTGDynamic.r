@@ -93,7 +93,7 @@ SingleGTGDynamic <- function(AgeVec, LinfGTG, MparGTG, RecGTGMonth, TSkpar, L50,
   }	
   
   if (TS <= MaxAge) { 
-    RecVec <- c(rep(R0, MaxAge - TS),rev(TrackRecruitsGTG[1:TS]))
+    RecVec <- c(rep(TrackRecruitsGTG[1], MaxAge - TS),rev(TrackRecruitsGTG[1:TS]))
 	ind <- which(RecVec > 0)
     SpUnFPR2 <- sum(SpUnF[ind]/RecVec[ind])
     SpFPR2 <- sum(SpF[ind]/RecVec[ind])

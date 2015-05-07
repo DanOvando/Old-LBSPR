@@ -67,6 +67,10 @@ SingleYearEq <- function(FparYr, SimPars) {
       print(paste("Month", TS, "of", 12))
     }
 	
+	# Generate Size Composition 
+	
+	
+	
     output <- NULL
     output$EndYrAgeVecGTG <- LastNAgeVec
     output$EndYrAgeVecUFGTG <- LastNAgeUFVec
@@ -76,8 +80,8 @@ SingleYearEq <- function(FparYr, SimPars) {
     output$SBBiomassYr <- sum(SpawnBioTS[1:12])
     output$CurrEggs <- sum(CurrEggs[1:12])
     output$CatchAnnual <- sum(CatchTS[1:12])
-	output$SpFPR <- sum(SpFPR)
-	output$SpUnFPR <- sum(SpUnFPR)
+	output$SpFPR <- SpFPR
+	output$SpUnFPR <- SpUnFPR
 	output$SPR <- sum(SpFPR)/sum(SpUnFPR)
     return(output)
   })	

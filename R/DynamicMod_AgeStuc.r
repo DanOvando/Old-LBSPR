@@ -36,6 +36,8 @@ DynamicMod_AgeStuc <- function(SimPars, RecDevVec) {
     RunSingleYr <- SingleYearEq(FparYr=FirstYrFpar, SimPars)
     
     # First 12 TS 
+	SpFPR[1:12] <- RunSingleYr$SpFPR
+	SpUnFPR[1:12] <- RunSingleYr$SpUnFPR
     TrackRecruits[1:12,] <- RunSingleYr$TrackRecruits
     NatAgeMonth[,1:12] <- RunSingleYr$NatAgeMonth
 	NatAgeMonthUF[,1:12] <- RunSingleYr$NatAgeMonthUF
@@ -124,6 +126,8 @@ DynamicMod_AgeStuc <- function(SimPars, RecDevVec) {
     output$AnnCatch  <- CatchAnnual
     output$AnnCatchComp  <- CatchLenComp
     output$AnnRec  <- AnnualRecVec
+	output$SpFPR <- SpFPR
+	output$SpUnFPR <- SpUnFPR
     output$SPR <- SPR
     output$AnnF <- TSFpar
 	output$TSMpar <- TSMpar
