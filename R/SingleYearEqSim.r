@@ -22,7 +22,6 @@ SingleYearEq <- function(FparYr, SimPars) {
     TrackRecruits <- matrix(NA, nrow=NTimeSteps, ncol=NGTG)
     
     TrackRecruits[1,] <- R0 * Probs * RecGTGMonthProb[1]
-
     MKGTG <- (MK)+ Mslope*(DiffLinfs-Linf)
     MparGTG <- MKGTG * TSkpar
     # Initial Equilibrium Unfished Age Structure - First Month 
@@ -36,6 +35,8 @@ SingleYearEq <- function(FparYr, SimPars) {
 	
     NatAgeMonthUF[,1] <- apply(FirstMonthEqAgeUF, 1, sum) # Age structure at end of month 1 
     SpawnBioTS[1] <- sum(apply(sapply(1:NGTG, function (X) RunGTGs1stMonth[,X]$SpawnBioUF),1,sum))
+	SpUnFPR[1] <- sum(sapply(1:NGTG, function (X) RunGTGs1stMonth[,X]$SpUnFPR2))
+	SpFPR[1] <- sum(sapply(1:NGTG, function (X) RunGTGs1stMonth[,X]$SpFPR2))
     CurrEggs[1] <- sum(sapply(1:NGTG, function (X) RunGTGs1stMonth[,X]$CurrEggs))
     CatchTS[1] <- sum(sapply(1:NGTG, function (X) RunGTGs1stMonth[,X]$Catch))
     
@@ -49,7 +50,6 @@ SingleYearEq <- function(FparYr, SimPars) {
       # Run Each GTG one TS #
       RunGTGs <- sapply(1:NGTG, function(GTG) {
           RecGTG <- Probs[GTG] * RecGTGMonth
-		  
           SingleGTGDynamic(AgeVec, LinfGTG=DiffLinfs[GTG], MparGTG=MparGTG[GTG], RecGTGMonth=RecGTG, TSkpar=TSkpar, L50, L95, SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, FparYr=FparYr, MeanLinf=Linf, LastNAgeVec=LastNAgeVec[,GTG], LastNAgeUFVec=LastNAgeUFVec[,GTG], TrackRecruitsGTG=TrackRecruits[,GTG], TS, RecGTGMonthVec=NULL, RecProb=NULL, R0=R0)
       })
       LastNAgeVec <- sapply(1:NGTG, function (X) RunGTGs[,X]$Fished)  
@@ -57,6 +57,8 @@ SingleYearEq <- function(FparYr, SimPars) {
       
       spBio <- sapply(1:NGTG, function (X) RunGTGs[,X]$SpawnBioF)
       SpawnBioTS[TS] <- sum(apply(spBio, 1, sum))
+	  SpUnFPR[TS] <- sum(sapply(1:NGTG, function (X) RunGTGs[,X]$SpUnFPR2))
+	  SpFPR[TS] <- sum(sapply(1:NGTG, function (X) RunGTGs[,X]$SpFPR2))
       CurrEggs[TS] <- sum(sapply(1:NGTG, function(X) RunGTGs[,X]$CurrEggs)) # Age based calc 
       CatchTS[TS] <- sum(sapply(1:NGTG, function (X) RunGTGs[,X]$Catch))
       
@@ -74,6 +76,9 @@ SingleYearEq <- function(FparYr, SimPars) {
     output$SBBiomassYr <- sum(SpawnBioTS[1:12])
     output$CurrEggs <- sum(CurrEggs[1:12])
     output$CatchAnnual <- sum(CatchTS[1:12])
+	output$SpFPR <- sum(SpFPR)
+	output$SpUnFPR <- sum(SpUnFPR)
+	output$SPR <- sum(SpFPR)/sum(SpUnFPR)
     return(output)
   })	
 }

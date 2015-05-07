@@ -14,7 +14,6 @@ SingleGTGDynamic <- function(AgeVec, LinfGTG, MparGTG, RecGTGMonth, TSkpar, L50,
   if (Mpow > 0) MatAge <- MparGTG * (MeanLinf/(LenVec))^Mpow
   FatAge <- SelAge * FparYr # F for each age 
   ZatAge <- FatAge + MatAge # Z for each GTG 
-  
   # Age Model #
   MaxAge <- max(AgeVec)
   NatAgeUnfished <- rep(0, length(AgeVec))
@@ -27,12 +26,12 @@ SingleGTGDynamic <- function(AgeVec, LinfGTG, MparGTG, RecGTGMonth, TSkpar, L50,
     NatAgeFished[1] <- NatAgeUnfished[1] <- RecGTGMonthVec[1] * rec 
     KK <- 12:2
     for (age in 2:12) {
-   	  NatAgeUnfished[age] <- rec * RecGTGMonthVec[KK[age-1]] * exp(-ZatAge[age-1]*(age-1))
+   	  NatAgeUnfished[age] <- rec * RecGTGMonthVec[KK[age-1]] * exp(-MatAge[age-1]*(age-1))
 	  NatAgeFished[age] <- rec * RecGTGMonthVec[KK[age-1]] * exp(-ZatAge[age-1]*(age-1))
 	}  
-    for (age in 13: length(AgeVec)) {
-	  NatAgeUnfished[age] <- NatAgeUnfished[age-12] * exp(-ZatAge[age-1] * 12)
-	  NatAgeFished[age] <- NatAgeFished[age-12] * exp(-ZatAge[age-1] * 12)
+    for (age in 13:length(AgeVec)) { 
+	  NatAgeUnfished[age] <- NatAgeUnfished[age-12] * exp(-sum(MatAge[(age-12):(age-1)]))
+	  NatAgeFished[age] <- NatAgeFished[age-12] * exp(-sum(ZatAge[(age-12):(age-1)]))
 	}  
 	NatAgeCatch[age] <- FatAge[age]/ZatAge[age] * NatAgeFished[age] * (1-exp(-ZatAge[age]))
   }
@@ -47,6 +46,7 @@ SingleGTGDynamic <- function(AgeVec, LinfGTG, MparGTG, RecGTGMonth, TSkpar, L50,
       if (age > 1) {
 	    NatAgeUnfished[age] <- LastNAgeUFVec[age-1] * exp(-MatAge[age-1])  
         NatAgeFished[age] <- LastNAgeVec[age-1] * exp(-ZatAge[age-1])
+		# if (age == 25) print(LastNAgeVec[age-1])
 	  }  
 	  if (AgeVec[age] == MaxAge) {
 	    NatAgeUnfished[age] <- LastNAgeUFVec[age-1] * (exp(-MatAge[age-1])) #/(1-exp(-MatAge[age])))
@@ -55,6 +55,7 @@ SingleGTGDynamic <- function(AgeVec, LinfGTG, MparGTG, RecGTGMonth, TSkpar, L50,
       NatAgeCatch[age] <- FatAge[age]/ZatAge[age] * NatAgeFished[age] * (1-exp(-ZatAge[age]))
     }
   }	  
+
   # Length Structure # 
   N <- NatAgeCatch
   LengthCompCatch <- LengthCompFished <- LengthCompUF <- rep(0, length(LenMids))

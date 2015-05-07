@@ -22,6 +22,7 @@ SimParsCalc <- function(SimPars, ModType="Len") {
     SimPars$kpar <- kpar <- Mpar/MK
     # Adjust rate parameters
 	SimPars$TSMpar <- TSMpar <- Mpar / TStep
+	SimPars$TSFpar <- TSFpar <- FM * TSMpar
     SimPars$TSkpar <- TSkpar <- kpar/ TStep
 	SimPars$MaxAge <- MaxAge <- round(-log(0.001)/TSMpar,0) # Maximum age 
     SimPars$AgeVec <- 0:MaxAge  # in units of time-step

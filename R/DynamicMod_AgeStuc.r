@@ -59,7 +59,6 @@ DynamicMod_AgeStuc <- function(SimPars, RecDevVec) {
       	
       RecGTGMonth <- RecYr * RecGTGMonthProb[TS] # Add variable recruitment here
       TrackRecruits[TS,] <- Probs * RecGTGMonth
-      
       # Run Each GTG one TS #
       RunGTGs <- sapply(1:NGTG, function(GTG) {
           RecGTG <- Probs[GTG] * RecGTGMonth
@@ -107,7 +106,7 @@ DynamicMod_AgeStuc <- function(SimPars, RecDevVec) {
     	# Annual Spawn Biomass 
         AnnualEgProd[Yr] <- sum(CurrEggs[(TS-11):TS])
     	SBBiomassYr[Yr] <- sum(SpawnBioTS[(TS-11):TS])
-    	AnnualRecVec[Yr] <- BHRecruitFun(currEggProd= AnnualEgProd[Yr] , steepness, R0, UnfishedEggProd, RecDev=RecDevVec[Yr])
+    	AnnualRecVec[Yr] <- BHRecruitFun(currEggProd= AnnualEgProd[Yr], steepness, R0, UnfishedEggProd, RecDev=RecDevVec[Yr])	
     	TrackMonth <- 0 
     	
     	# Catch 
