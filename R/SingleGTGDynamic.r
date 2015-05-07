@@ -6,7 +6,7 @@
 #' @seealso \code{\link{}}
 #' @export
 
-SingleGTGDynamic <- function(AgeVec, LinfGTG, MparGTG, RecGTGMonth, TSkpar, L50, L95, SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, FparYr, MeanLinf, LastNAgeVec, LastNAgeUFVec, TrackRecruitsGTG, TS, RecGTGMonthVec, RecProb, R0) {  
+SingleGTGDynamic <- function(AgeVec, LinfGTG, MparGTG, RecGTGMonth, TSkpar, L50, L95, SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, FparYr, MeanLinf, LastNAgeVec, LastNAgeUFVec, TrackRecruitsGTG, TS, RecGTGMonthVec, RecProb, R0, RecGTGMonthProb) {  
   LenVec <-  LinfGTG * (1-exp(-TSkpar*(AgeVec+0.5)))
   SelAge <- 1.0/(1+exp(-log(19)*(LenVec-SL50)/((SL95)-SL50)))
   
@@ -93,15 +93,19 @@ SingleGTGDynamic <- function(AgeVec, LinfGTG, MparGTG, RecGTGMonth, TSkpar, L50,
   }	
   
   if (TS <= MaxAge) { 
-    RecVec <- c(rep(TrackRecruitsGTG[1], MaxAge - TS),rev(TrackRecruitsGTG[1:TS]))
+    HistRecs <- RecProb *  RecGTGMonthProb
+    temp <- 1:length(TS:MaxAge)
+    RecVec <- c(rev(TrackRecruitsGTG[1:TS]), HistRecs[temp])
 	ind <- which(RecVec > 0)
     SpUnFPR2 <- sum(SpUnF[ind]/RecVec[ind])
     SpFPR2 <- sum(SpF[ind]/RecVec[ind])
+
   }
   
   SpawnBioUF <- NatAgeUnfished * WghtVec * MatVec
   SpawnBioF <- NatAgeFished * WghtVec * MatVec
   CurrEggs <- sum(SpF)
+  
   
   
   # Catch 

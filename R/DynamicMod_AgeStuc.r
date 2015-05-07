@@ -64,7 +64,7 @@ DynamicMod_AgeStuc <- function(SimPars, RecDevVec) {
       # Run Each GTG one TS #
       RunGTGs <- sapply(1:NGTG, function(GTG) {
           RecGTG <- Probs[GTG] * RecGTGMonth
-          SingleGTGDynamic(AgeVec, LinfGTG=DiffLinfs[GTG], MparGTG=MparGTG[GTG], RecGTGMonth=RecGTG, TSkpar=TSkpar, L50, L95, SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, FparYr=TSFpar, MeanLinf=Linf, LastNAgeVec=LastNAgeVec[,GTG], LastNAgeUFVec=LastNAgeUFVec[,GTG], TrackRecruitsGTG=TrackRecruits[,GTG], TS, R0=NULL)
+          SingleGTGDynamic(AgeVec, LinfGTG=DiffLinfs[GTG], MparGTG=MparGTG[GTG], RecGTGMonth=RecGTG, TSkpar=TSkpar, L50, L95, SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, FparYr=TSFpar, MeanLinf=Linf, LastNAgeVec=LastNAgeVec[,GTG], LastNAgeUFVec=LastNAgeUFVec[,GTG], TrackRecruitsGTG=TrackRecruits[,GTG], TS, RecGTGMonthVec, RecProb=Probs[GTG], R0=NULL, RecGTGMonthProb)
       })
       
       LastNAgeVec <- sapply(1:NGTG, function (X) RunGTGs[,X]$Fished)  
