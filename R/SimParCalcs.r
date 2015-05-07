@@ -14,6 +14,7 @@ SimParsCalc <- function(SimPars, ModType="Len") {
   OptimiseFitness <- function(logMslope, SimPars, Function) {
     Mslope <- exp(logMslope) #+ 0.000000001
     SimPars$Mslope <- Mslope
+	SimPars$FM <- 0
     return(Function(SimPars=SimPars)$ObjFun)
   }
   

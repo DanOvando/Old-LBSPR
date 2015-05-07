@@ -10,7 +10,6 @@
 #' @author Adrian Hordyk
 #' @export
 
-
 SimMod_AgeEq <- function(SimPars) {
   with(SimPars, {
 
@@ -18,7 +17,7 @@ SimMod_AgeEq <- function(SimPars) {
     SelectGearLen <- 1.0/(1+exp(-log(19)*(LenMids-SL50)/((SL95)-SL50)))
 	# SelectMLLLen <- 1.0/(1+exp(-log(19)*(LenMids-MLL50)/((MLL95)-MLL50)))
     # SelectMLLLen <- SelectMLLLen * SelectGearLen
-	
+	TSFpar <- FM * TSMpar
 	# Single GTG Model 
     SingleGTGAgeModel <- function(AgeVec, LinfGTG, MparGTG, RecGTG, kpar, L50, L95, SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, Fpar, MaxAge, MeanLinf) {  
       LenVec <-  LinfGTG * (1-exp(-kpar*(AgeVec+0.5)))

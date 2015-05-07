@@ -21,7 +21,6 @@ SimMod_LHR <- function(SimPars, ...) {
 	  recK <- 5 
 	  R0 <- 10
 	}
-  
     # Error Catches #
     
     # if (CVLinf * Linf * MaxSD * MK * ) add all parameters and check that greater than zero

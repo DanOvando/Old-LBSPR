@@ -54,7 +54,7 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
     DeltaMax <- Dat["DeltaMax", ind+1]
     if (length(DeltaMax) < 1| is.na(DeltaMax)) DeltaMax <- 0.5 * Linf
     
-    AssessPars <- list(MK=MK, Linf=Linf, CVLinf=CVLinf, L50=L50, L95=L95, 
+    AssessPars <- list(MK=MK, Linf=Linf, CVLinf=CVLinf, SDLinf=SDLinf, L50=L50, L95=L95, 
                     Walpha=Walpha, Wbeta=Wbeta, FecB=FecB, Mpow=Mpow, 
                     NGTG=NGTG, GTGLinfdL=GTGLinfdL, MaxSD=MaxSD, SL50Min=SL50Min, 
                     SL50Max=SL50Max, DeltaMin=DeltaMin, DeltaMax=DeltaMax)
@@ -62,7 +62,6 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
 	AssessPars$Linc <- LenMids[2] - LenMids[1]
 	AssessPars$AssessOpt <- TRUE
 	AssessPars$Mslope <- exp(optimise(OptimiseFitness, interval=log(c(0.000001, 0.1)), SimPars=AssessPars, Function=SimMod_LHR)$minimum) # Run Sim Model and fit optimal MSlope
-    # AssessPars$Mslope <- as.numeric(PredictMSlope(AssessPars))
   }
   
   if(AssessParExt != ".csv") stop("Unrecognized file extension")
