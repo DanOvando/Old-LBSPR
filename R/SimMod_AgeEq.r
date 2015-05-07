@@ -13,23 +13,7 @@
 
 SimMod_AgeEq <- function(SimPars) {
   with(SimPars, {
-    # Mortality for given time-step
-    TSMpar <- Mpar / TStep
-    TSkpar <- kpar/ TStep
-	TSFpar <- FM * TSMpar
-    MaxAge <- round(-log(0.001)/TSMpar,0) # Maximum age 
-    AgeVec <- 0:MaxAge # in units of time-step
-    
-	# GTG set-up 
-	SDLinf <- CVLinf * Linf
-    DiffLinfs <- seq(from=Linf-MaxSD*SDLinf, to=Linf+MaxSD*SDLinf, by=GTGLinfBy) # Linfs of GTGs by units of GTGLinfBy 
-    NGTG <- length(DiffLinfs)
-    Probs <- dnorm(DiffLinfs, Linf, sd=SDLinf)/sum(dnorm(DiffLinfs, Linf, sd=SDLinf)) 
-    ToSize <- max(DiffLinfs) 
-    ToSize <- ceiling(max(ToSize)/Linc)*Linc # round up 
-    LenBins <- seq(from=0, to=ToSize, by=Linc)
-    LenMids <- seq(from=LenBins[2]-0.5*Linc, by=Linc, length=length(LenBins)-1)
-	
+
 	# Selectivity by size - add MLL later 
     SelectGearLen <- 1.0/(1+exp(-log(19)*(LenMids-SL50)/((SL95)-SL50)))
 	# SelectMLLLen <- 1.0/(1+exp(-log(19)*(LenMids-MLL50)/((MLL95)-MLL50)))

@@ -21,8 +21,7 @@ SimMod_LHR <- function(SimPars, ...) {
 	  recK <- 5 
 	  R0 <- 10
 	}
-    SDLinf <- CVLinf * Linf # Standard Deviation of Pop. Linf 
-    
+  
     # Error Catches #
     
     # if (CVLinf * Linf * MaxSD * MK * ) add all parameters and check that greater than zero
