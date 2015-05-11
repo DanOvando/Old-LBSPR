@@ -27,13 +27,13 @@ SimMod_LHR <- function(SimPars, ...) {
     # if (length(stuff) == 0)
     
     # Growth-Type-Group Model Setup 
-    DiffLinfs <- seq(from=Linf - MaxSD * SDLinf, to=Linf + MaxSD * SDLinf, length=NGTG)
+    # DiffLinfs <- seq(from=Linf - MaxSD * SDLinf, to=Linf + MaxSD * SDLinf, length=NGTG)
     GTGLinfdL <- DiffLinfs[2] - DiffLinfs[1]
     RecProbs <- dnorm(DiffLinfs, Linf, SDLinf)/sum(dnorm(DiffLinfs, Linf, SDLinf)) # Recruits normally distributed across GTGs
     
     # Set up Length Bins of Population Model 
-    LenBins <- seq(from=0, by=Linc, to=Linf + MaxSD * SDLinf)
-    LenMids <- seq(from=LenBins[1] + 0.5*Linc, by=Linc, length=length(LenBins)-1)
+    # LenBins <- seq(from=0, by=Linc, to=Linf + MaxSD * SDLinf)
+    # LenMids <- seq(from=LenBins[1] + 0.5*Linc, by=Linc, length=length(LenBins)-1)
     
     MatLen <- 1.0/(1+exp(-log(19)*(LenMids-L50)/(L95-L50))) # Maturity Schedule 
     Weight <- Walpha * LenMids^Wbeta # Weight-at-length 
@@ -122,6 +122,8 @@ SimMod_LHR <- function(SimPars, ...) {
     ExpectedLenCatchUnfished <- apply(NatLUnFishedCatch, 1, sum)/sum(apply(NatLUnFishedCatch, 1, sum))
     ExpectedLenPopUnfished <- apply(NatLUnFishedPop, 1, sum)/sum(apply(NatLUnFishedPop, 1, sum))
     
+	
+	
     Output <- NULL 
     Output$SPR <- SPR
     Output$Yield <- Yield 
@@ -129,6 +131,7 @@ SimMod_LHR <- function(SimPars, ...) {
     Output$ExpLenPopFished <- ExpectedLenPopFished
     Output$ExpLenCatchUnfished <- ExpectedLenCatchUnfished
     Output$ExpLenPopUnfished <- ExpectedLenPopUnfished
+	Output$NatLFishedPop <- NatLFishedPop
     Output$LenBins <- LenBins
     Output$LenMids <- LenMids
     Output$NGTG <- NGTG
