@@ -18,29 +18,44 @@ SimParsCalc <- function(SimPars, ModType="Len") {
     return(Function(SimPars=SimPars)$ObjFun)
   }
   
+  getFMFun <- function(testFM, setSPR, simpars) {
+    simpars$FM <- testFM
+    return(sum(setSPR - SimMod_LHR(simpars)$SPR)^2)
+  }
+  
   with(SimPars, {
+    SimPars$SDLinf <- SDLinf<- CVLinf * Linf
     SimPars$kpar <- kpar <- Mpar/MK
     # Adjust rate parameters
 	SimPars$TSMpar <- TSMpar <- Mpar / TStep
 	SimPars$TSFpar <- TSFpar <- FM * TSMpar
     SimPars$TSkpar <- TSkpar <- kpar/ TStep
 	SimPars$MaxAge <- MaxAge <- round(-log(0.001)/TSMpar,0) # Maximum age 
-    SimPars$AgeVec <- 0:MaxAge  # in units of time-step
+    SimPars$AgeVec <- NULL
+	if (is.na(MaxAge) != 1) SimPars$AgeVec <- 0:MaxAge  # in units of time-step
 	
     # Projection  
 	SimPars$NTimeSteps <- NTimeSteps <- NYears * TStep
 	
 	# Recruitment 
-	SimPars$recK   	<- (4*steepness)/(1-steepness) # Goodyear composition ratio 
+	SimPars$recK   	<- (4*steepness)/(1-steepness) # Goodyear compensation ratio 
 	#Recruitment probability by Month
     MonthRecProb <- dnorm(1:12, mean=MeanMonth, sd=MonthSD)
     SimPars$MonthRecProb <- MonthRecProb <- MonthRecProb/sum(MonthRecProb)
-    SimPars$RecGTGMonthProb <- rep(MonthRecProb, NTimeSteps/TStep)
+	SimPars$RecGTGMonthProb <- NULL
+	if (is.na(sum(MonthRecProb)) != 1)   SimPars$RecGTGMonthProb <- rep(MonthRecProb, NTimeSteps/TStep)
 	
 	
-	# GTG set-up 
-    SimPars$DiffLinfs <- DiffLinfs <- seq(from=Linf-MaxSD*SDLinf, to=Linf+MaxSD*SDLinf, by=GTGLinfBy) # Linfs of GTGs by units of GTGLinfBy 
-    SimPars$NGTG <- length(DiffLinfs)
+	# GTG set-up
+    if(is.na(GTGLinfBy)) {
+       SimPars$DiffLinfs <- DiffLinfs <- seq(from=Linf-MaxSD*SDLinf, to=Linf+MaxSD*SDLinf, length=SimPars$NGTG) # Linfs of GTGs by units of GTGLinfBy 
+	   SimPars$GTGLinfBy <- GTGLinfBy <- DiffLinfs[2] - DiffLinfs[1]
+	}
+    if(is.na(NGTG)) {
+	  SimPars$DiffLinfs <- DiffLinfs <- seq(from=Linf-MaxSD*SDLinf, to=Linf+MaxSD*SDLinf, by=GTGLinfBy) # Linfs of GTGs by units of GTGLinfBy 
+      SimPars$NGTG <- length(DiffLinfs)
+	} 
+    	
     SimPars$Probs <- dnorm(DiffLinfs, Linf, sd=SDLinf)/sum(dnorm(DiffLinfs, Linf, sd=SDLinf)) 
     SimPars$ToSize <- ToSize <- max(DiffLinfs) 
     ToSize <- ceiling(max(ToSize)/Linc)*Linc # round up 
@@ -66,6 +81,11 @@ SimParsCalc <- function(SimPars, ModType="Len") {
 	# M per GTG 
 	SimPars$MKGTG <- MKGTG <- MK + Mslope*(DiffLinfs-Linf)
     SimPars$MparGTG <- MparGTG <- MKGTG * TSkpar
+	
+	# Start SPR and F/M
+	if (startSPR > 0 & is.na(startSPR) !=1) {
+	  SimPars$FM <- FM <- optimise(getFMFun, interval=c(0,30), setSPR=startSPR, simpars=SimPars)$minimum
+	}
  
   print("Derived simulation parameters successfully calculated") 
   return(SimPars)
