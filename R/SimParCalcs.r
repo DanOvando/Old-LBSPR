@@ -76,10 +76,14 @@ SimParsCalc <- function(SimPars, ModType="Len") {
 	if (ModType == "Age") Function <- SimMod_AgeEq
 	SimPars$AssessOpt <- FALSE
 	print("Optimising for Mslope - this may take a short while...") 
-	SimPars$Mslope <- Mslope <- exp(optimise(OptimiseFitness, interval=log(c(0.000001, 0.1)), SimPars=SimPars, Function=Function)$minimum)
+	SimPars$Mslope <- Mslope <- exp(optimise(OptimiseFitness, interval=log(c(0.0001, 0.1)), SimPars=SimPars, Function=Function)$minimum)
 	
 	# M per GTG 
 	SimPars$MKGTG <- MKGTG <- MK + Mslope*(DiffLinfs-Linf)
+	if (min(SimPars$MKGTG) <= 0) {
+	  print("MKgtg is negative for some GTG. Try change NGTG")
+	  readline("********** WARNING - Press Enter to continue **********")
+	}
     SimPars$MparGTG <- MparGTG <- MKGTG * TSkpar
 	
 	# Start SPR and F/M

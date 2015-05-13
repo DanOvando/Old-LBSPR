@@ -30,16 +30,22 @@ SimMod_LHR <- function(SimPars, ...) {
     # DiffLinfs <- seq(from=Linf - MaxSD * SDLinf, to=Linf + MaxSD * SDLinf, length=NGTG)
     GTGLinfdL <- DiffLinfs[2] - DiffLinfs[1]
     RecProbs <- dnorm(DiffLinfs, Linf, SDLinf)/sum(dnorm(DiffLinfs, Linf, SDLinf)) # Recruits normally distributed across GTGs
-    
-    # Set up Length Bins of Population Model 
+
+	# Set up Length Bins of Population Model 
     # LenBins <- seq(from=0, by=Linc, to=Linf + MaxSD * SDLinf)
     # LenMids <- seq(from=LenBins[1] + 0.5*Linc, by=Linc, length=length(LenBins)-1)
     
-    MatLen <- 1.0/(1+exp(-log(19)*(LenMids-L50)/(L95-L50))) # Maturity Schedule 
+    MatLen <- 1.0/(1+exp(-log(19)*(LenMids-L50)/(L95-L50))) # Maturity Schedule for mean GTG 
     Weight <- Walpha * LenMids^Wbeta # Weight-at-length 
     FecLen <- MatLen * LenMids^FecB # Relative Fecundity at Length 
-    # FecLen <- FecLen/max(FecLen) # Divide by maximum to make it more useful for plotting. Can add extra parameter(s) so that fecundity is absolute rather than relative (makes no difference to SPR)
-    
+	
+	# Maturity and Fecundity for each GTG 
+	L50GTG <- L50/Linf * DiffLinfs
+	L95GTG <- L95/Linf * DiffLinfs 
+	DeltaGTG <- L95GTG - L50GTG
+	MatLenGTG <- sapply(seq_along(DiffLinfs), function (X) 1.0/(1+exp(-log(19)*(LenMids-L50GTG[X])/DeltaGTG[X])))
+	FecLenGTG <- MatLenGTG * LenMids^FecB
+
     VulLen <- 1.0/(1+exp(-log(19)*(LenBins-SL50)/(SL95-SL50))) # Selectivity-at-Length
     SelLen <- VulLen
     # # Minimum Legal Length 
@@ -55,13 +61,11 @@ SimMod_LHR <- function(SimPars, ...) {
 	tempFun <- function(X) MKL + Mslope*(DiffLinfs[X] - Linf) #
 	# tempFun <- function(X) MKL + Mslope*log(DiffLinfs[X] / Linf) # try log here
     MKMat <- sapply(seq_along(DiffLinfs), function (X) tempFun(X))
-	
     FK <- FM * MK # F/K ratio 
     FKL <- FK * SelLen # F/K ratio for each length class   
     # FkL[Legal == 0] <- FkL[Legal == 0] * DiscardMortFrac 
     ZKLMat <- MKMat + FKL # Z/K ratio (total mortality) for each GTG
     
-	
     # Set Up Empty Matrices 
     NPRFished <- NPRUnfished <- matrix(0, nrow=length(LenBins), ncol=NGTG) # number-per-recruit at length
     NatLUnFishedPop <- NatLFishedPop <- NatLUnFishedCatch <- NatLFishedCatch <- FecGTGUnfished <- matrix(0, nrow=length(LenMids), ncol=NGTG) # number per GTG in each length class 
@@ -82,15 +86,15 @@ SimMod_LHR <- function(SimPars, ...) {
       for (L in 1:length(LenMids)) {
         NatLUnFishedPop[L, GTG] <- (NPRUnfished[L,GTG] - NPRUnfished[L+1,GTG])/MKMat[L, GTG]
         NatLFishedPop[L, GTG] <- (NPRFished[L,GTG] - NPRFished[L+1,GTG])/ZKLMat[L, GTG]  
-		FecGTGUnfished[L, GTG] <- NatLUnFishedPop[L, GTG] * FecLen[L]
+		FecGTGUnfished[L, GTG] <- NatLUnFishedPop[L, GTG] * FecLenGTG[L, GTG]
       }
       
       NatLUnFishedCatch[,GTG] <- NatLUnFishedPop[, GTG] * 1.0/(1+exp(-log(19)*(LenMids-SL50)/(SL95-SL50))) 
       NatLFishedCatch[,GTG]  <- NatLFishedPop[, GTG] * 1.0/(1+exp(-log(19)*(LenMids-SL50)/(SL95-SL50)))
       
       # Eggs-per-recruit for each GTG 
-      EPR_GTG[GTG,1] <- sum(NatLUnFishedPop[, GTG] * FecLen)
-      EPR_GTG[GTG,2] <- sum(NatLFishedPop[, GTG] * FecLen)
+      EPR_GTG[GTG,1] <- sum(NatLUnFishedPop[, GTG] * FecLenGTG[,GTG])
+      EPR_GTG[GTG,2] <- sum(NatLFishedPop[, GTG] * FecLenGTG[,GTG])
       
       # YPR 
       YPR[GTG] <- sum(NatLFishedPop[, GTG]  * Weight * 1.0/(1+exp(-log(19)*(LenMids-SL50)/(SL95-SL50)))) * FM 
@@ -100,7 +104,7 @@ SimMod_LHR <- function(SimPars, ...) {
     Fit <- apply(FecGTGUnfished, 2, sum, na.rm=TRUE) # Total Fecundity per Group
     FitPR <- Fit/RecProbs # Fitness per-recruit
     ObjFun <- sum((FitPR - median(FitPR, na.rm=TRUE))^2, na.rm=TRUE) # This needs to be minimised to make fitness approximately equal across GTG - by adjusting Mslope 
-	Pen <- 0; if (min(MKMat) <= 0 ) Pen <- (1/abs(min(MKMat)))^2 * 1E5 # Penalty for optimising Mslope   
+	Pen <- 0; if (min(MKMat) <= 0 ) Pen <- (1/abs(min(MKMat)))^2 * 1E7 # Penalty for optimising Mslope   
     ObjFun <- ObjFun + Pen
 	# print(cbind(Mslope, ObjFun, Pen))
 	
@@ -139,8 +143,8 @@ SimMod_LHR <- function(SimPars, ...) {
     Output$DiffLinfs <- DiffLinfs
     Output$RecProbs <- RecProbs
     Output$Weight <- Weight
-    Output$FecLen <- FecLen 
-    Output$MatLen <- MatLen 
+    Output$FecLen <- FecLenGTG 
+    Output$MatLen <- MatLenGTG 
     Output$SelLen <- SelLen
 	Output$MKL <- MKL
     Output$MKMat <- MKMat 
@@ -150,7 +154,9 @@ SimMod_LHR <- function(SimPars, ...) {
 	Output$Pen <- Pen
 	Output$FitPR <- FitPR
 	Output$Diff <- range(FitPR)[2] - range(FitPR)[1]
-    
+	Output$L50GTG <- L50GTG 
+    Output$L95GTG <- L95GTG
+	Output$UnFishNGTG <- NatLUnFishedPop
     return(Output)
   })
 }
