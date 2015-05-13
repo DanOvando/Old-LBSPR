@@ -4,17 +4,15 @@
 \alias{CopyADMBFile}
 \title{Download LBSPR executable.}
 \usage{
-CopyADMBFile(System = "Win", DestPath = NULL, vers = "1.00")
+CopyADMBFile(System = "Win", DestPath = NULL)
 }
 \arguments{
 \item{System}{A \code{character} string of either "Win" for Windows OS compiled executable, or anything else (not blank) for UNIX OS}
 
 \item{DestPath}{A code{character} string detailing the full path where the binary file is to be downloaded.}
-
-\item{vers}{A \code{character} string representing the version. Default value should be the latest release.}
 }
 \description{
-Function to download the LBSPR binary from GitHub and copy to local machine.
+Function to download the LBSPR binary from online repository and copy to local machine.
 }
 \author{
 Adrian Hordyk
