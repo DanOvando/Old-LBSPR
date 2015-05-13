@@ -34,6 +34,10 @@ DynamicMod_AgeStuc <- function(SimPars, RecDevVec) {
 	AnnualRec <- R0
     FirstYrFpar <- 0 # Unfished Eq
     RunSingleYr <- SingleYearEq(FparYr=FirstYrFpar, SimPars)
+	
+	# Maturity 
+    L50GTGVec <- L50/Linf * DiffLinfs
+	L95GTGVec <- L95/Linf * DiffLinfs
     
     # First 12 TS 
 	SpFPR[1:12] <- RunSingleYr$SpFPR
@@ -64,7 +68,7 @@ DynamicMod_AgeStuc <- function(SimPars, RecDevVec) {
       # Run Each GTG one TS #
       RunGTGs <- sapply(1:NGTG, function(GTG) {
           RecGTG <- Probs[GTG] * RecGTGMonth
-          SingleGTGDynamic(AgeVec, LinfGTG=DiffLinfs[GTG], MparGTG=MparGTG[GTG], RecGTGMonth=RecGTG, TSkpar=TSkpar, L50, L95, SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, FparYr=TSFpar, MeanLinf=Linf, LastNAgeVec=LastNAgeVec[,GTG], LastNAgeUFVec=LastNAgeUFVec[,GTG], TrackRecruitsGTG=TrackRecruits[,GTG], TS, RecGTGMonthVec, RecProb=Probs[GTG], R0=NULL, RecGTGMonthProb)
+          SingleGTGDynamic(AgeVec, LinfGTG=DiffLinfs[GTG], MparGTG=MparGTG[GTG], RecGTGMonth=RecGTG, TSkpar=TSkpar, L50GTGVec[GTG], L95GTGVec[GTG], SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, FparYr=TSFpar, MeanLinf=Linf, LastNAgeVec=LastNAgeVec[,GTG], LastNAgeUFVec=LastNAgeUFVec[,GTG], TrackRecruitsGTG=TrackRecruits[,GTG], TS, RecGTGMonthVec, RecProb=Probs[GTG], R0=NULL, RecGTGMonthProb)
       })
       
       LastNAgeVec <- sapply(1:NGTG, function (X) RunGTGs[,X]$Fished)  

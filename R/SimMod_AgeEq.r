@@ -19,7 +19,7 @@ SimMod_AgeEq <- function(SimPars) {
     # SelectMLLLen <- SelectMLLLen * SelectGearLen
 	TSFpar <- FM * TSMpar
 	# Single GTG Model 
-    SingleGTGAgeModel <- function(AgeVec, LinfGTG, MparGTG, RecGTG, kpar, L50, L95, SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, Fpar, MaxAge, MeanLinf) {  
+    SingleGTGAgeModel <- function(AgeVec, LinfGTG, MparGTG, RecGTG, kpar, L50GTG, L95GTG, SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, Fpar, MaxAge, MeanLinf) {  
       LenVec <-  LinfGTG * (1-exp(-kpar*(AgeVec+0.5)))
       SelAge <- 1.0/(1+exp(-log(19)*(LenVec-SL50)/((SL95)-SL50)))
       
@@ -60,7 +60,7 @@ SimMod_AgeEq <- function(SimPars) {
     
       # Calc SPR 
 	  # by length 
-      MatVec <- 1.0/(1+exp(-log(19)*(LenMids-L50)/((L95)-L50)))
+      MatVec <- 1.0/(1+exp(-log(19)*(LenMids-L50GTG)/((L95GTG)-L50GTG)))
       WatAge <- Walpha * LenMids ^ Wbeta
       FecVec <- (LenMids ^ FecB) * MatVec
      
@@ -68,9 +68,9 @@ SimMod_AgeEq <- function(SimPars) {
       SpF <- LengthCompFished * FecVec
       SpUnFPR <- sum(SpUnF)/RecGTG
       SpFPR <- sum(SpF)/RecGTG 
-     
+
 	  # by age 
-      MatVec <- 1.0/(1+exp(-log(19)*(LenVec-L50)/((L95)-L50)))
+      MatVec <- 1.0/(1+exp(-log(19)*(LenVec-L50GTG)/((L95GTG)-L50GTG)))
       FecVec <- (LenVec ^ FecB) * MatVec
       WatAge <- Walpha * LenVec ^ Wbeta
       SpUnF <- NatAgeUnfished * FecVec
@@ -86,13 +86,15 @@ SimMod_AgeEq <- function(SimPars) {
     }
 
 	MKGTG <- (TSMpar/TSkpar)+ Mslope*(DiffLinfs-Linf)
-
+    
+	L50GTGVec <- L50/Linf * DiffLinfs
+	L95GTGVec <- L95/Linf * DiffLinfs
 	# Run population model for each GTG
 	RunGTGs <- sapply(1:NGTG, function(X) {
       LinfGTG <- DiffLinfs[X]
       MparGTG <- MKGTG[X] * TSkpar
       RecGTG <- Probs[X] * R0
-      SingleGTGAgeModel(AgeVec, LinfGTG, MparGTG, RecGTG, TSkpar, L50, L95, SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, TSFpar, MaxAge, Linf)
+      SingleGTGAgeModel(AgeVec, LinfGTG, MparGTG, RecGTG, TSkpar, L50GTGVec[X], L95GTGVec[X], SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, TSFpar, MaxAge, Linf)
     })
 	
     SPR <- sum(sapply(1:NGTG, function(X) RunGTGs[,X]$SpFPR))/sum(sapply(1:NGTG, function(X) RunGTGs[,X]$SpUnFPR)) # Calc SPR by length

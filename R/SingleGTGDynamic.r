@@ -6,7 +6,7 @@
 #' @seealso \code{\link{}}
 #' @export
 
-SingleGTGDynamic <- function(AgeVec, LinfGTG, MparGTG, RecGTGMonth, TSkpar, L50, L95, SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, FparYr, MeanLinf, LastNAgeVec, LastNAgeUFVec, TrackRecruitsGTG, TS, RecGTGMonthVec, RecProb, R0, RecGTGMonthProb) {  
+SingleGTGDynamic <- function(AgeVec, LinfGTG, MparGTG, RecGTGMonth, TSkpar, L50gtg, L95gtg, SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, FparYr, MeanLinf, LastNAgeVec, LastNAgeUFVec, TrackRecruitsGTG, TS, RecGTGMonthVec, RecProb, R0, RecGTGMonthProb) {  
   LenVec <-  LinfGTG * (1-exp(-TSkpar*(AgeVec+0.5)))
   SelAge <- 1.0/(1+exp(-log(19)*(LenVec-SL50)/((SL95)-SL50)))
   
@@ -79,7 +79,7 @@ SingleGTGDynamic <- function(AgeVec, LinfGTG, MparGTG, RecGTGMonth, TSkpar, L50,
   # }
  
   # SPR by Age 
-  MatVec <- 1.0/(1+exp(-log(19)*(LenVec-L50)/((L95)-L50)))
+  MatVec <- 1.0/(1+exp(-log(19)*(LenVec-L50gtg)/((L95gtg)-L50gtg)))
   WghtVec <- Walpha * LenVec ^ Wbeta
   FecVec <- (LenVec ^ FecB) * MatVec
   

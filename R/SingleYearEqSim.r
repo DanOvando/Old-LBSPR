@@ -24,10 +24,15 @@ SingleYearEq <- function(FparYr, SimPars) {
     RecGTGMonth <- TrackRecruits[1,] <- R0 * Probs * RecGTGMonthProb[1]
     MKGTG <- (MK)+ Mslope*(DiffLinfs-Linf)
     MparGTG <- MKGTG * TSkpar
+	
+    # Maturity 
+    L50GTGVec <- L50/Linf * DiffLinfs
+	L95GTGVec <- L95/Linf * DiffLinfs
+	
     # Initial Equilibrium Unfished Age Structure - First Month 
     RunGTGs1stMonth <- sapply(1:NGTG, function(GTG) {
 	  RecGTG <- Probs[GTG] * RecGTGMonth
-      SingleGTGDynamic(AgeVec, LinfGTG=DiffLinfs[GTG], MparGTG=MparGTG[GTG], RecGTGMonth=RecGTG, TSkpar=TSkpar, L50, L95, SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, FparYr=FparYr, MeanLinf=Linf, LastNAgeVec=NULL, LastNAgeUFVec=NULL, TrackRecruitsGTG=TrackRecruits[,GTG], TS=1, RecGTGMonthVec=MonthRecProb, RecProb=Probs[GTG], R0=R0, RecGTGMonthProb=RecGTGMonthProb)
+      SingleGTGDynamic(AgeVec, LinfGTG=DiffLinfs[GTG], MparGTG=MparGTG[GTG], RecGTGMonth=RecGTG, TSkpar=TSkpar, L50GTGVec[GTG], L95GTGVec[GTG], SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, FparYr=FparYr, MeanLinf=Linf, LastNAgeVec=NULL, LastNAgeUFVec=NULL, TrackRecruitsGTG=TrackRecruits[,GTG], TS=1, RecGTGMonthVec=MonthRecProb, RecProb=Probs[GTG], R0=R0, RecGTGMonthProb=RecGTGMonthProb)
     })
     
     FirstMonthEqAgeFs <- sapply(1:NGTG, function (X) RunGTGs1stMonth[,X]$Fished)
@@ -51,7 +56,7 @@ SingleYearEq <- function(FparYr, SimPars) {
       # Run Each GTG one TS #
       RunGTGs <- sapply(1:NGTG, function(GTG) {
           RecGTG <- Probs[GTG] * RecGTGMonth
-          SingleGTGDynamic(AgeVec, LinfGTG=DiffLinfs[GTG], MparGTG=MparGTG[GTG], RecGTGMonth=RecGTG, TSkpar=TSkpar, L50, L95, SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, FparYr=FparYr, MeanLinf=Linf, LastNAgeVec=LastNAgeVec[,GTG], LastNAgeUFVec=LastNAgeUFVec[,GTG], TrackRecruitsGTG=TrackRecruits[,GTG], TS, RecGTGMonthVec=MonthRecProb, RecProb=Probs[GTG], R0=R0, RecGTGMonthProb=RecGTGMonthProb)
+          SingleGTGDynamic(AgeVec, LinfGTG=DiffLinfs[GTG], MparGTG=MparGTG[GTG], RecGTGMonth=RecGTG, TSkpar=TSkpar, L50GTGVec[GTG], L95GTGVec[GTG], SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, FparYr=FparYr, MeanLinf=Linf, LastNAgeVec=LastNAgeVec[,GTG], LastNAgeUFVec=LastNAgeUFVec[,GTG], TrackRecruitsGTG=TrackRecruits[,GTG], TS, RecGTGMonthVec=MonthRecProb, RecProb=Probs[GTG], R0=R0, RecGTGMonthProb=RecGTGMonthProb)
       })
       LastNAgeVec <- sapply(1:NGTG, function (X) RunGTGs[,X]$Fished)  
       LastNAgeUFVec <- sapply(1:NGTG, function (X) RunGTGs[,X]$Unfished)
