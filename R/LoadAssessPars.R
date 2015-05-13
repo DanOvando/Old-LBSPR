@@ -19,7 +19,7 @@
 #' @export
 
 
-LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileName="AssessPars", AssessParExt=".csv", ind=1, LenMids, LHR_OverRide=list()) {
+LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileName="AssessPars", AssessParExt=".csv", ind=1, LenMids, IncludeDatFile=FALSE, LenDatType=list("raw", "comp"), LHR_OverRide=list()) {
   
   OptimiseFitness <- function(logMslope, SimPars, Function) {
     Mslope <- exp(logMslope) #+ 0.000000001
@@ -29,7 +29,7 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
   if(AssessParExt == ".csv") {
     Dat <- read.csv(file.path(PathtoAssessFile, paste0(AssessParFileName, AssessParExt)), as.is=TRUE)
     row.names(Dat) <- Dat[,1]
-    
+   
     # Load new parameters 
 	MK     <- LHR_OverRide$MK
 	Linf   <- LHR_OverRide$Linf 
@@ -41,6 +41,7 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
 	FecB   <- LHR_OverRide$FecB
 	Mpow   <- LHR_OverRide$Mpow
 	NGTG   <- LHR_OverRide$NGTG
+	By     <- LHR_OverRide$By
 
     if (is.null(MK)) 	MK   <- as.numeric(Dat["MK",ind+1])
     if (is.null(Linf)) 	Linf   <- as.numeric(Dat["Linf",ind+1])
@@ -52,7 +53,8 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
     if (is.null(FecB)) 	FecB   <- as.numeric(Dat["FecB",ind+1])
     if (is.null(Mpow)) 	Mpow   <- as.numeric(Dat["Mpow",ind+1])
     if (is.null(NGTG)) 	NGTG   <- as.numeric(Dat["NGTG",ind+1])
-
+	if (is.null(By))  By     <- as.numeric(Dat["DatLinc",ind+1])
+	
     SDLinf <- as.numeric(CVLinf * Linf)
     MaxSD  <- as.numeric(Dat["MaxSD",ind+1])
     GTGLinfdL <- ((Linf + MaxSD * SDLinf) - (Linf - MaxSD * SDLinf))/(NGTG-1)
@@ -72,10 +74,38 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
                     Walpha=Walpha, Wbeta=Wbeta, FecB=FecB, Mpow=Mpow, 
                     NGTG=NGTG, GTGLinfdL=GTGLinfdL, MaxSD=MaxSD, SL50Min=SL50Min, 
                     SL50Max=SL50Max, DeltaMin=DeltaMin, DeltaMax=DeltaMax, DiffLinfs=DiffLinfs)
+					
+	# Read in data file if it exists
+	if (!IncludeDatFile & length(LenMids) < 1) stop("Require either length data file or length bin mid-points")
+	if (IncludeDatFile) {
+	  DataFile <- Dat["DataFile",ind+1]
+	  if (is.na(DataFile) | is.null(DataFile) | length(DataFile) <1) stop("Data file not specified")
+      WD <- getwd()
+	  setwd(PathtoAssessFile)
+	  readLenDat <- try(read.csv(DataFile), silent=TRUE)
+	  if (class(readLenDat) == "try-error") {
+	    print(paste("File", DataFile, "not found"))
+		print("Files in current directory are:")
+		print(list.files())
+		stop()
+	  }
+
+	  if (ncol(readLenDat) == 1 & tolower(LenDatType) == "raw") {
+	    rawLenDat <- as.vector(unlist(readLenDat))
+	    LenBins <- seq(from=0, to=Linf*1.25, by=By) 
+	    LenMids <- seq(from=LenBins[1] + 0.5*By, by=By, length=length(LenBins)-1)
+		
+		LenDat <- as.vector(table(cut(rawLenDat, LenBins)))
+		AssessPars$LenDat <- LenDat
+	  }
+	 if (ncol(readLenDat) == 1 & tolower(LenDatType) != "raw") stop("Length data file only has one column but data type is not specified as 'raw'")
+	 if (ncol(readLenDat) == 2 & tolower(LenDatType) != "comp") stop("Length data file only has two columns but data type is not specified as 'comp'") 
+	 # Add others...
+	}
 	
 	AssessPars$LenMids <- LenMids
-	AssessPars$Linc <- BY <- LenMids[2] - LenMids[1]
-	AssessPars$LenBins <- seq(from=LenMids[1] - 0.5*BY, by=BY, length=length(LenMids)+1)
+	AssessPars$Linc <- By <- LenMids[2] - LenMids[1]
+	AssessPars$LenBins <- seq(from=LenMids[1] - 0.5*By, by=By, length=length(LenMids)+1)
 	AssessPars$AssessOpt <- TRUE
 
 	AssessPars$Mslope <- exp(optimise(OptimiseFitness, interval=log(c(0.000001, 0.1)), SimPars=AssessPars, Function=SimMod_LHR)$minimum) # Run Sim Model and fit optimal MSlope
@@ -83,5 +113,6 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
   
   if(AssessParExt != ".csv") stop("Unrecognized file extension")
   print("Assessment parameters successfully loaded")
+  setwd(WD)
   return(AssessPars)
 }

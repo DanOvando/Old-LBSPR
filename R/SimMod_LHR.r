@@ -156,7 +156,7 @@ SimMod_LHR <- function(SimPars, ...) {
 	Output$Diff <- range(FitPR)[2] - range(FitPR)[1]
 	Output$L50GTG <- L50GTG 
     Output$L95GTG <- L95GTG
-	Output$UnFishNGTG <- NatLUnFishedPop
+	# Output$UnFishNGTG <- NatLUnFishedPop
     return(Output)
   })
 }
