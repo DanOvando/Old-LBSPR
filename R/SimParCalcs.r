@@ -75,7 +75,8 @@ SimParsCalc <- function(SimPars, ModType="Len") {
 	if (ModType == "Len") Function <- SimMod_LHR				
 	if (ModType == "Age") Function <- SimMod_AgeEq
 	SimPars$AssessOpt <- FALSE
-	print("Optimising for Mslope - this may take a short while...") 
+	print("Optimising for Mslope - this may take a short while...")
+    
 	SimPars$Mslope <- Mslope <- exp(optimise(OptimiseFitness, interval=log(c(0.0001, 0.1)), SimPars=SimPars, Function=Function)$minimum)
 	
 	# M per GTG 

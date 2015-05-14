@@ -10,12 +10,12 @@ CopyADMBFile <- function(System="Win", DestPath=NULL) {
   if (System == "Win") {
     destPath <- paste0(DestPath, "/lbspr.exe")
 	
-	URL <- paste0("https://dl.dropboxusercontent.com/u/24856730/LBSPR/release/current/lbspr.exe")
+	URL <- paste0("https://github.com/AdrianHordyk/LBSPR_ADMB/releases/download/v1.00/lbspr.exe")
     download(URL, destPath, mode="wb")
   }
   if (System != "Win") {
     destPath <- paste0(DestPath, "/lbspr")
-	URL <- paste0("https://dl.dropboxusercontent.com/u/24856730/LBSPR/release/current/lbspr")
+	URL <- paste0("https://github.com/AdrianHordyk/LBSPR_ADMB/releases/download/v1.00/lbspr")
     download(URL, destPath, mode="wb")
   }  
 }
