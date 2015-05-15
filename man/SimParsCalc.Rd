@@ -4,7 +4,8 @@
 \alias{SimParsCalc}
 \title{Calculate values for derived simulations parameters.}
 \usage{
-SimParsCalc(SimPars, ModType = "Len")
+SimParsCalc(SimPars, ModType = "Len", OptMslope = FALSE,
+  PredictMslope = TRUE, OverMslope = NULL)
 }
 \arguments{
 \item{SimPars}{An object of class \code{list} that contains all parameters

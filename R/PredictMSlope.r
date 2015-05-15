@@ -8,6 +8,6 @@
 
 PredictMSlope <- function(Pars) {
   data(MSlopeMod)
-  Mslope <- exp(predict(MslopeMod, newdata=list(LinfMK=log(Pars$Linf)-log(Pars$MK), CVLinf=Pars$CVLinf, RelL50=(Pars$L50/Pars$Linf), MatDelta=Pars$L95 - Pars$L50,  Mpow=Pars$Mpow)))  
+  Mslope <- exp(predict(MslopeMod, newdata=list(logLinf=log(Pars$Linf), RelL50=relL50, RelL95=relL95, Mpow=Pars$Mpow, logMK=log(Pars$MK)))) 
   return(as.numeric(Mslope))
 }

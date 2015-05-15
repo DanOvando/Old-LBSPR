@@ -6,7 +6,8 @@
 \usage{
 LoadAssessPars(PathtoAssessFile = "~/PathToAssessFile",
   AssessParFileName = "AssessPars", AssessParExt = ".csv", ind = 1,
-  LenMids, MKOR)
+  LenMids, IncludeDatFile = FALSE, LenDatType = list("raw", "comp"),
+  LHR_OverRide = list())
 }
 \arguments{
 \item{PathtoAssessFile}{an object of class \code{character} containing the

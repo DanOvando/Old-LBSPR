@@ -4,8 +4,8 @@
 \alias{SingleGTGDynamic}
 \title{Single GTG Dynamic Projection Model Function}
 \usage{
-SingleGTGDynamic(AgeVec, LinfGTG, MparGTG, RecGTGMonth, TSkpar, L50, L95, SL50,
-  SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, FparYr, MeanLinf,
+SingleGTGDynamic(AgeVec, LinfGTG, MparGTG, RecGTGMonth, TSkpar, L50gtg, L95gtg,
+  SL50, SL95, Walpha, Wbeta, FecB, LenMids, LenBins, Mpow, FparYr, MeanLinf,
   LastNAgeVec, LastNAgeUFVec, TrackRecruitsGTG, TS, RecGTGMonthVec, RecProb, R0,
   RecGTGMonthProb)
 }

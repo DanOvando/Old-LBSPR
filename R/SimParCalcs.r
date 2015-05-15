@@ -9,7 +9,7 @@
 #' @author Adrian Hordyk 
 #' @export
 
-SimParsCalc <- function(SimPars, ModType="Len") {
+SimParsCalc <- function(SimPars, ModType="Len", OptMslope=FALSE, PredictMslope=TRUE, OverMslope=NULL) {
 
   OptimiseFitness <- function(logMslope, SimPars, Function) {
     Mslope <- exp(logMslope) #+ 0.000000001
@@ -71,29 +71,46 @@ SimParsCalc <- function(SimPars, ModType="Len") {
 	SampleProb <- dnorm(1:12, mean=SampleMonthMean, sd=SampleMonthSD)
     SimPars$SampleProb <- SampleProb/sum(SampleProb)
 	
+	
 	# Optimise Mslope 
 	if (ModType == "Len") Function <- SimMod_LHR				
 	if (ModType == "Age") Function <- SimMod_AgeEq
 	SimPars$AssessOpt <- FALSE
-	print("Optimising for Mslope - this may take a short while...")
-    
-	SimPars$Mslope <- Mslope <- exp(optimise(OptimiseFitness, interval=log(c(0.0001, 0.1)), SimPars=SimPars, Function=Function)$minimum)
 	
-	# M per GTG 
-	SimPars$MKGTG <- MKGTG <- MK + Mslope*(DiffLinfs-Linf)
-	if (min(SimPars$MKGTG) <= 0) {
-	  print("MKgtg is negative for some GTG. Try change NGTG")
-	  readline("********** WARNING - Press Enter to continue **********")
+	if (length(OverMslope) < 1 & PredictMslope == FALSE & OptMslope==FALSE) stop("Mslope parameters not set")
+	if (length(OverMslope) > 0) {
+	  print(paste("Mslope set at ", OverMslope))
+	  SimPars$Mslope <- OverMslope
+	  OptMslope <- PredictMslope <- FALSE
+	} 
+    if (PredictMslope) {
+	  print("Predicting Mslope")
+	  SimPars$Mslope <- Mslope <- PredictMSlope(SimPars)
+	  OptMslope <- FALSE
 	}
+	if (OptMslope) {
+	  print("Optimising for Mslope - this may take a short while...")
+	  SimPars$Mslope <- Mslope <- exp(optimise(OptimiseFitness, interval=log(c(0.0001, 0.1)), SimPars=SimPars, Function=Function)$minimum)
+	  # M per GTG 
+	  if (min(SimPars$MKGTG) <= 0) {
+	    print("MKgtg is negative for some GTG. Try change NGTG")
+	    # readline("********** WARNING - Press Enter to continue **********")
+	  }
+	}
+
+	
+	SimPars$MKGTG <- MKGTG <- MK + Mslope*(DiffLinfs-Linf)
     SimPars$MparGTG <- MparGTG <- MKGTG * TSkpar
 	
 	# Start SPR and F/M
 	if (startSPR > 0 & is.na(startSPR) !=1) {
+	  print("Optimising F/M for startSPR - this may take a short while...")
 	  SimPars$FM <- FM <- optimise(getFMFun, interval=c(0,30), setSPR=startSPR, simpars=SimPars)$minimum
 	}
  
   print("Derived simulation parameters successfully calculated") 
   return(SimPars)
   })
-}
+  }
+
 
