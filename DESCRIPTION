@@ -7,4 +7,4 @@ Author: Adrian Hordyk
 Maintainer: Adrian Hordyk <ar.hordyk@gmail.com>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
-Depends: downloader
+Depends: downloader, mgcv 

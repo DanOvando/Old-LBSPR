@@ -92,13 +92,13 @@ SimParsCalc <- function(SimPars, ModType="Len", OptMslope=FALSE, PredictMslope=T
 	  print("Optimising for Mslope - this may take a short while...")
 	  SimPars$Mslope <- Mslope <- exp(optimise(OptimiseFitness, interval=log(c(0.0001, 0.1)), SimPars=SimPars, Function=Function)$minimum)
 	  # M per GTG 
+	  SimPars$MKGTG <- MKGTG <- MK + Mslope*(DiffLinfs-Linf)
 	  if (min(SimPars$MKGTG) <= 0) {
 	    print("MKgtg is negative for some GTG. Try change NGTG")
 	    # readline("********** WARNING - Press Enter to continue **********")
 	  }
 	}
 
-	
 	SimPars$MKGTG <- MKGTG <- MK + Mslope*(DiffLinfs-Linf)
     SimPars$MparGTG <- MparGTG <- MKGTG * TSkpar
 	
@@ -111,6 +111,6 @@ SimParsCalc <- function(SimPars, ModType="Len", OptMslope=FALSE, PredictMslope=T
   print("Derived simulation parameters successfully calculated") 
   return(SimPars)
   })
-  }
+}
 
 

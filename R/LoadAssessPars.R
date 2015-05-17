@@ -19,7 +19,7 @@
 #' @export
 
 
-LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileName="AssessPars", AssessParExt=".csv", ind=1, LenMids, IncludeDatFile=FALSE, LenDatType=list("raw", "comp"), LHR_OverRide=list()) {
+LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileName="AssessPars", AssessParExt=".csv", ind=1, LenMids, IncludeDatFile=FALSE, LenDatType=list("raw", "comp"), LHR_OverRide=list(), OptMslope=FALSE, PredictMslope=TRUE, OverMslope=NULL) {
   
   OptimiseFitness <- function(logMslope, SimPars, Function) {
     Mslope <- exp(logMslope) #+ 0.000000001
@@ -107,8 +107,34 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
 	AssessPars$Linc <- By <- LenMids[2] - LenMids[1]
 	AssessPars$LenBins <- seq(from=LenMids[1] - 0.5*By, by=By, length=length(LenMids)+1)
 	AssessPars$AssessOpt <- TRUE
-
-	AssessPars$Mslope <- exp(optimise(OptimiseFitness, interval=log(c(0.000001, 0.1)), SimPars=AssessPars, Function=SimMod_LHR)$minimum) # Run Sim Model and fit optimal MSlope
+    
+    # Optimise Mslope 
+	if (length(OverMslope) < 1 & PredictMslope == FALSE & OptMslope==FALSE) stop("Mslope parameters not set")
+	if (length(OverMslope) > 0) {
+	  print(paste("Mslope set at ", OverMslope))
+	  AssessPars$Mslope <- OverMslope
+	  OptMslope <- PredictMslope <- FALSE
+	} 
+    if (PredictMslope) {
+	  print("Predicting Mslope")
+	  AssessPars$Mslope <- Mslope <- PredictMSlope(AssessPars)
+	  OptMslope <- FALSE
+	}
+	if (OptMslope) {
+	  print("Optimising for Mslope - this may take a short while...")
+	  AssessPars$Mslope <- Mslope <- exp(optimise(OptimiseFitness, interval=log(c(0.0001, 0.1)), SimPars=AssessPars, Function=SimMod_LHR)$minimum)
+	  # M per GTG 
+	  AssessPars$MKGTG <- MKGTG <- MK + Mslope*(DiffLinfs-Linf)
+	  if (min(AssessPars$MKGTG) <= 0) {
+	    print("MKgtg is negative for some GTG. Try change NGTG")
+	    # readline("********** WARNING - Press Enter to continue **********")
+	  }
+	}
+	AssessPars$MKMin <- as.numeric(Dat["MKMin",ind+1])
+	AssessPars$MKMax <- as.numeric(Dat["MKMax",ind+1])
+	AssessPars$LinfMin <- as.numeric(Dat["LinfMin",ind+1])
+	AssessPars$LinfMax <- as.numeric(Dat["LinfMax",ind+1])
+	
   }
   
   if(AssessParExt != ".csv") stop("Unrecognized file extension")
