@@ -55,6 +55,9 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
     if (is.null(NGTG)) 	NGTG   <- as.numeric(Dat["NGTG",ind+1])
 	if (is.null(By))  By     <- as.numeric(Dat["DatLinc",ind+1])
 	
+	relL50 <- L50/Linf
+	relL95 <- L95/Linf
+	
     SDLinf <- as.numeric(CVLinf * Linf)
     MaxSD  <- as.numeric(Dat["MaxSD",ind+1])
     GTGLinfdL <- ((Linf + MaxSD * SDLinf) - (Linf - MaxSD * SDLinf))/(NGTG-1)
@@ -70,10 +73,7 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
     DeltaMax <- as.numeric(Dat["DeltaMax", ind+1])
     if (length(DeltaMax) < 1| is.na(DeltaMax)) DeltaMax <- 0.5 * Linf
     
-    AssessPars <- list(MK=MK, Linf=Linf, CVLinf=CVLinf, SDLinf=SDLinf, L50=L50, L95=L95, 
-                    Walpha=Walpha, Wbeta=Wbeta, FecB=FecB, Mpow=Mpow, 
-                    NGTG=NGTG, GTGLinfdL=GTGLinfdL, MaxSD=MaxSD, SL50Min=SL50Min, 
-                    SL50Max=SL50Max, DeltaMin=DeltaMin, DeltaMax=DeltaMax, DiffLinfs=DiffLinfs)
+    AssessPars <- list(MK=MK, Linf=Linf, CVLinf=CVLinf, SDLinf=SDLinf, L50=L50, L95=L95, relL50=relL50, relL95=relL95, Walpha=Walpha, Wbeta=Wbeta, FecB=FecB, Mpow=Mpow,               NGTG=NGTG, GTGLinfdL=GTGLinfdL, MaxSD=MaxSD, SL50Min=SL50Min, SL50Max=SL50Max, DeltaMin=DeltaMin, DeltaMax=DeltaMax, DiffLinfs=DiffLinfs)
 					
 	# Read in data file if it exists
 	if (!IncludeDatFile & length(LenMids) < 1) stop("Require either length data file or length bin mid-points")
@@ -82,7 +82,7 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
 	  if (is.na(DataFile) | is.null(DataFile) | length(DataFile) <1) stop("Data file not specified")
       WD <- getwd()
 	  setwd(PathtoAssessFile)
-	  readLenDat <- try(read.csv(DataFile), silent=TRUE)
+	  readLenDat <- try(read.csv(DataFile, header=FALSE), silent=TRUE)
 	  if (class(readLenDat) == "try-error") {
 	    print(paste("File", DataFile, "not found"))
 		print("Files in current directory are:")
@@ -100,7 +100,15 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
 	  }
 	 if (ncol(readLenDat) == 1 & tolower(LenDatType) != "raw") stop("Length data file only has one column but data type is not specified as 'raw'")
 	 if (ncol(readLenDat) == 2 & tolower(LenDatType) != "comp") stop("Length data file only has two columns but data type is not specified as 'comp'") 
-	 # Add others...
+	 if (ncol(readLenDat) == 2 & tolower(LenDatType) == "comp") {
+	   LenMids <- readLenDat[,1]
+	   By <- LenMids[2] - LenMids[1]
+	   X <- 2:length(LenMids)
+	   if (all(LenMids[X] - LenMids[X-1] == By) == FALSE) stop("Length classes not equidistant")
+	    # add zeros if minimum length mids is not 0
+	   LenDat <- readLenDat[,2]
+	   AssessPars$LenDat <- LenDat
+	 }
 	}
 	
 	AssessPars$LenMids <- LenMids

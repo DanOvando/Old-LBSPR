@@ -32,6 +32,8 @@ SimParsCalc <- function(SimPars, ModType="Len", OptMslope=FALSE, PredictMslope=T
     SimPars$TSkpar <- TSkpar <- kpar/ TStep
 	SimPars$MaxAge <- MaxAge <- round(-log(0.001)/TSMpar,0) # Maximum age 
     SimPars$AgeVec <- NULL
+	SimPars$relL50 <- L50/Linf
+	SimPars$relL95 <- L95/Linf
 	if (is.na(MaxAge) != 1) SimPars$AgeVec <- 0:MaxAge  # in units of time-step
 	
     # Projection  

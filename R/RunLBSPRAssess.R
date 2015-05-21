@@ -134,6 +134,9 @@ RunLBSPRAssess <- function(AssessPars, LenFreq, LenMids, ADMBDir, ExName="lbspr"
       cormat <- NA
     } 
     
+	  # plot(LenMids, LenFreq/sum(LenFreq) ,type="l")
+	  # lines(LenMids, Pred)
+	  
     setwd(GetWD)
     Output$ModelFailed <- ModelFailed
     Output$ADMBCode <- ADMBCode
