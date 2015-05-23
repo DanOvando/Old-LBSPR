@@ -19,7 +19,7 @@
 #' @export
 
 
-LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileName="AssessPars", AssessParExt=".csv", ind=1, LenMids, IncludeDatFile=FALSE, LenDatType=list("raw", "comp"), LHR_OverRide=list(), OptMslope=FALSE, PredictMslope=TRUE, OverMslope=NULL) {
+LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileName="AssessPars", AssessParExt=".csv", ind=1, LenMids, IncludeDatFile=FALSE, LenDatType=list("raw", "comp"), LHR_OverRide=list(), OptMslope=FALSE, PredictMslope=TRUE, OverMslope=NULL, datCol=1) {
   
   OptimiseFitness <- function(logMslope, SimPars, Function) {
     Mslope <- exp(logMslope) #+ 0.000000001
@@ -99,14 +99,20 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
 		AssessPars$LenDat <- LenDat
 	  }
 	 if (ncol(readLenDat) == 1 & tolower(LenDatType) != "raw") stop("Length data file only has one column but data type is not specified as 'raw'")
-	 if (ncol(readLenDat) == 2 & tolower(LenDatType) != "comp") stop("Length data file only has two columns but data type is not specified as 'comp'") 
-	 if (ncol(readLenDat) == 2 & tolower(LenDatType) == "comp") {
-	   LenMids <- readLenDat[,1]
+	 if (ncol(readLenDat) > 1 & tolower(LenDatType) != "comp") stop("Length data file only has two columns but data type is not specified as 'comp'") 
+	 Years <- NULL
+	 Ind <- 1:nrow(readLenDat)
+	 if (ncol(readLenDat) >= 2 & tolower(LenDatType) == "comp") {
+	   if(is.na(readLenDat[1,1])) { # time-series info?
+	     Years <- readLenDat[1,2:ncol(readLenDat)]
+		 Ind <- 2:nrow(readLenDat)
+	   }
+	   LenMids <- readLenDat[Ind,1]
 	   By <- LenMids[2] - LenMids[1]
 	   X <- 2:length(LenMids)
 	   if (all(LenMids[X] - LenMids[X-1] == By) == FALSE) stop("Length classes not equidistant")
 	    # add zeros if minimum length mids is not 0
-	   LenDat <- readLenDat[,2]
+	   LenDat <- readLenDat[Ind,datCol+1]
 	   AssessPars$LenDat <- LenDat
 	 }
 	}
@@ -115,6 +121,7 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
 	AssessPars$Linc <- By <- LenMids[2] - LenMids[1]
 	AssessPars$LenBins <- seq(from=LenMids[1] - 0.5*By, by=By, length=length(LenMids)+1)
 	AssessPars$AssessOpt <- TRUE
+	AssessPars$Years <- Years
     
     # Optimise Mslope 
 	if (length(OverMslope) < 1 & PredictMslope == FALSE & OptMslope==FALSE) stop("Mslope parameters not set")
