@@ -92,7 +92,8 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
 
 	  if (ncol(readLenDat) == 1 & tolower(LenDatType) == "raw") {
 	    rawLenDat <- as.vector(unlist(readLenDat))
-	    LenBins <- seq(from=0, to=Linf*1.25, by=By) 
+		Max <- max(max(rawLenDat) * 1.1, Linf*1.25)
+	    LenBins <- seq(from=0, to=Max, by=By) 
 	    LenMids <- seq(from=LenBins[1] + 0.5*By, by=By, length=length(LenBins)-1)
 		
 		LenDat <- as.vector(table(cut(rawLenDat, LenBins)))
@@ -113,6 +114,14 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
 	   if (all(LenMids[X] - LenMids[X-1] == By) == FALSE) stop("Length classes not equidistant")
 	    # add zeros if minimum length mids is not 0
 	   LenDat <- readLenDat[Ind,datCol+1]
+	   
+	   if (LenMids[1] - 0.5*By != 0) {
+	     lenSeq <- seq(from=By, to=LenMids[1] -By, by=By) 
+		 Zeros <- rep(0, length(lenSeq))
+		 LenMids <- c(lenSeq,LenMids)
+		 LenDat <- c(Zeros, LenDat)
+	   }
+	   
 	   AssessPars$LenDat <- LenDat
 	 }
 	}
