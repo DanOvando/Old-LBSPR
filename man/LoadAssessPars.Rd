@@ -5,7 +5,9 @@
 \title{Load LBSPR Assessment Parameters}
 \usage{
 LoadAssessPars(PathtoAssessFile = "~/PathToAssessFile",
-  AssessParFileName = "AssessPars", AssessParExt = ".csv", ind = 1)
+  AssessParFileName = "AssessPars", AssessParExt = ".csv", ind = 1,
+  LenMids, IncludeDatFile = FALSE, LenDatType = list("raw", "comp"),
+  LHR_OverRide = list())
 }
 \arguments{
 \item{PathtoAssessFile}{an object of class \code{character} containing the
@@ -21,7 +23,7 @@ not handle anything else)}
 \item{ind}{an optional \code{numeric} value indicating which column contains
 the parameters (default is 1).}
 
-\item{sep}{an object of class \code{character} that specifies if decimals points in csv are indicated by \code{comma} (default) or \code{period} (using read.csv2).}
+\item{LenMids}{A vector of the midpoints of the length classes for the observed length data.}
 }
 \value{
 Returns a list of assessment parameters (\code{AssessPars}) that is

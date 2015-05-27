@@ -89,8 +89,8 @@ WriteDat <- function(AssessPars, LengthMids, LenFreq, ADMBDir, ExName="lbspr") {
     write(log(DeltaMin),con)	
     write(as.character("#logDeltaMax"),con)
     write(log(DeltaMax),con)
-    write(as.character("#kslope"),con)
-    write(kslope,con)	
+    write(as.character("#Mslope"),con)
+    write(Mslope,con)	
     close(con)
   })
 } 

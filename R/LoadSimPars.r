@@ -11,45 +11,69 @@
 #' @export
 
 LoadSimPars <- function(PathtoSimFile="~/PathToSimFile", SimParFileName="SimData", SimParExt=".csv", ind=1) {
-  
+ 
   if(SimParExt == ".csv") {
-    Dat <- read.csv(file.path(PathtoSimFile, paste0(SimParFileName, SimParExt)))
+    Dat <- read.csv(file.path(PathtoSimFile, paste0(SimParFileName, SimParExt)), as.is=TRUE)
 	row.names(Dat) <- Dat[,1]
 		
 	# Load new parameters 
-	MK     <- Dat["MK",ind+1]
-	Linf   <- Dat["Linf",ind+1]
-	CVLinf <- Dat["CVLinf",ind+1]
-	L50    <- Dat["L50",ind+1]
-	L95    <- Dat["L95",ind+1]
-	Walpha <- Dat["Walpha",ind+1]
-	Wbeta  <- Dat["Wbeta",ind+1]
-	FecB   <- Dat["FecB",ind+1]
-	Mpow   <- Dat["Mpow",ind+1]
-	NGTG   <- Dat["NGTG",ind+1]
-	SDLinf <- CVLinf * Linf
-	MaxSD  <- Dat["MaxSD",ind+1]
-	GTGLinfdL <- ((Linf + MaxSD * SDLinf) - (Linf - MaxSD * SDLinf))/(NGTG-1);	
+	MK     <- as.numeric(Dat["MK",ind+1])
+	Mpar   <- as.numeric(Dat["Mpar",ind+1])
+	Linf   <- as.numeric(Dat["Linf",ind+1])
+	CVLinf <- as.numeric(Dat["CVLinf",ind+1])
+	L50    <- as.numeric(Dat["L50",ind+1])
+	L95    <- as.numeric(Dat["L95",ind+1])
+	Walpha <- as.numeric(Dat["Walpha",ind+1])
+	Wbeta  <- as.numeric(Dat["Wbeta",ind+1])
+	FecB   <- as.numeric(Dat["FecB",ind+1])
+	Mpow   <- as.numeric(Dat["Mpow",ind+1])
+	NGTG   <- as.numeric(Dat["NGTG",ind+1])
+	
+	MaxSD  <- as.numeric(Dat["MaxSD",ind+1])
+    GTGLinfBy <- as.numeric(Dat["GTGLinfBy",ind+1]) # for age structured model 
+	Linc   <- as.numeric(Dat["Linc",ind+1])
 
-	Linc   <- Dat["Linc",ind+1]
-	R0     <- Dat["R0",ind+1]
-	recK   <- Dat["recK",ind+1]
-	SL50   <- Dat["SL50",ind+1]
-	SL95   <- Dat["SL95",ind+1]
-	FM     <- Dat["FM",ind+1]
-	SPR    <- Dat["SPR",ind+1]
-	MLL	   <- Dat["MLL",ind+1]
-	DisMortFrac <- Dat["DisMortFrac",ind+1] 
-	SimPars <- list(MK=MK, Linf=Linf, CVLinf=CVLinf, L50=L50, L95=L95, 
+	# Adjustment to different time scale
+	TStep  <- as.numeric(Dat["Tstep",ind+1]) # 12 is monthly - only one that is currently supported
+	
+	# Recruitment
+	R0     		<- as.numeric(Dat["R0",ind+1])
+	steepness 	<- as.numeric(Dat["steepness",ind+1])
+	sigmaR 	<- as.numeric(Dat["sigmaR",ind+1])
+	MeanMonth <- as.numeric(Dat["MeanMonth",ind+1])
+	MonthSD <- as.numeric(Dat["MonthSD",ind+1])
+	
+	# Selectivity 
+	FM     <- as.numeric(Dat["FM",ind+1])
+	startSPR <- as.numeric(Dat["startSPR",ind+1])
+	SL50   <- as.numeric(Dat["SL50",ind+1])
+	SL95   <- as.numeric(Dat["SL95",ind+1])
+	MLL	   <- as.numeric(Dat["MLL",ind+1])
+	DisMortFrac <- as.numeric(Dat["DisMortFrac",ind+1])
+
+    # Sampling
+    SampleMonthMean	<- as.numeric(Dat["SampleMonthMean",ind+1])
+	SampleMonthSD	<- as.numeric(Dat["SampleMonthSD",ind+1])
+	SampleSize 		<- as.numeric(Dat["SampleSize",ind+1])
+	
+	# Projection
+	NyearsMulti <- as.numeric(Dat["NyearsMulti",ind+1])
+	NYears <- NULL
+	if (length(Mpar) > 0) NYears <- ceiling(-log(0.001)/Mpar * NyearsMulti)
+	NyearsHCR 	<- as.numeric(Dat["NyearsHCR",ind+1])
+	NumIts 		<- as.numeric(Dat["NumIts",ind+1])
+
+	SimPars <- list(MK=MK, Mpar=Mpar, Linf=Linf, CVLinf=CVLinf, L50=L50, L95=L95, 
 					Walpha=Walpha, Wbeta=Wbeta, FecB=FecB, Mpow=Mpow, 
-					NGTG=NGTG, GTGLinfdL=GTGLinfdL, MaxSD=MaxSD, Linc=Linc, R0=R0, recK=recK, 
-					SL50=SL50, SL95=SL95, FM=FM, SPR=SPR, MLL=MLL, DisMortFrac=DisMortFrac)
-	SimPars$kslope <- as.numeric(PredictKSlope(SimPars))
+					NGTG=NGTG, GTGLinfBy=GTGLinfBy, MaxSD=MaxSD, Linc=Linc, TStep=TStep,
+					R0=R0, steepness=steepness, sigmaR=sigmaR, MeanMonth=MeanMonth, MonthSD=MonthSD,
+					SL50=SL50, SL95=SL95, FM=FM, startSPR=startSPR, MLL=MLL, DisMortFrac=DisMortFrac,
+					SampleMonthMean=SampleMonthMean, SampleMonthSD=SampleMonthSD, SampleSize=SampleSize, NyearsHCR=NyearsHCR, NumIts=NumIts, NyearsMulti=NyearsMulti, NYears=NYears)
   }
   
   if(SimParExt != ".csv") stop("Unrecognized file extension")
-  print("Simulation parameters successfully loaded")
-  print(as.data.frame(SimPars))
+  print("Simulation parameters successfully loaded") 
+  # print((SimPars))
   return(SimPars)
 }
 
