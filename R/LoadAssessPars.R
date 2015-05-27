@@ -19,7 +19,7 @@
 #' @export
 
 
-LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileName="AssessPars", AssessParExt=".csv", ind=1, LenMids, IncludeDatFile=FALSE, LenDatType=list("raw", "comp"), LHR_OverRide=list(), OptMslope=FALSE, PredictMslope=TRUE, OverMslope=NULL, datCol=1) {
+LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileName="AssessPars", AssessParExt=".csv", ind=1, LenMids, IncludeDatFile=FALSE, LenDatType=list("raw", "comp"), LHR_OverRide=list(), OptMslope=FALSE, PredictMslope=TRUE, OverMslope=NULL, datCol=1, DoBS=FALSE) {
   
   OptimiseFitness <- function(logMslope, SimPars, Function) {
     Mslope <- exp(logMslope) #+ 0.000000001
@@ -98,6 +98,11 @@ LoadAssessPars <- function(PathtoAssessFile="~/PathToAssessFile", AssessParFileN
 		
 		LenDat <- as.vector(table(cut(rawLenDat, LenBins)))
 		AssessPars$LenDat <- LenDat
+		AssessPars$BSLenDat <- NULL
+		if (DoBS) { # Bootstrap length sample 
+		  BsDat <- sample(rawLenDat, size=length(rawLenDat), replace=TRUE)
+		  AssessPars$BSLenDat <- as.vector(table(cut(BsDat, LenBins))) 
+		}  
 	  }
 	 if (ncol(readLenDat) == 1 & tolower(LenDatType) != "raw") stop("Length data file only has one column but data type is not specified as 'raw'")
 	 if (ncol(readLenDat) > 1 & tolower(LenDatType) != "comp") stop("Length data file only has two columns but data type is not specified as 'comp'") 
